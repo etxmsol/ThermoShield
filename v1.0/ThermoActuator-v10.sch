@@ -10482,6 +10482,14 @@ Source: http://cache.national.com/ds/LM/LM158.pdf</description>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
 <part name="SW1" library="special" deviceset="SW_DIP-8" device=""/>
 <part name="JP1" library="SparkFun" deviceset="M02" device="LOCK"/>
+<part name="X2" library="con-phoenix-254" deviceset="MPT2" device=""/>
+<part name="GND6" library="supply1" deviceset="GND" device=""/>
+<part name="GND7" library="supply1" deviceset="GND" device=""/>
+<part name="R6" library="rcl" deviceset="R-EU_" device="R0805" value="100K"/>
+<part name="VDD3" library="supply1" deviceset="VDD" device=""/>
+<part name="R7" library="rcl" deviceset="R-EU_" device="R1206" value="10K"/>
+<part name="C2" library="rcl" deviceset="C-EU" device="C1206" value="10nF"/>
+<part name="GND8" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -10519,7 +10527,7 @@ Source: http://cache.national.com/ds/LM/LM158.pdf</description>
 <instance part="X1" gate="-1" x="294.64" y="160.02"/>
 <instance part="X1" gate="-2" x="294.64" y="154.94"/>
 <instance part="IC1" gate="A" x="347.98" y="162.56"/>
-<instance part="IC1" gate="B" x="350.52" y="121.92"/>
+<instance part="IC1" gate="B" x="350.52" y="114.3"/>
 <instance part="R4" gate="G$1" x="312.42" y="172.72" rot="R90"/>
 <instance part="R5" gate="G$1" x="320.04" y="165.1"/>
 <instance part="C1" gate="G$1" x="327.66" y="157.48" rot="R180"/>
@@ -10531,6 +10539,15 @@ Source: http://cache.national.com/ds/LM/LM158.pdf</description>
 <instance part="GND5" gate="1" x="347.98" y="149.86"/>
 <instance part="SW1" gate="A" x="134.62" y="38.1" rot="R180"/>
 <instance part="JP1" gate="G$1" x="195.58" y="139.7" rot="R180"/>
+<instance part="X2" gate="-1" x="294.64" y="109.22"/>
+<instance part="X2" gate="-2" x="294.64" y="104.14"/>
+<instance part="GND6" gate="1" x="289.56" y="147.32"/>
+<instance part="GND7" gate="1" x="289.56" y="96.52"/>
+<instance part="R6" gate="G$1" x="312.42" y="124.46" rot="R90"/>
+<instance part="VDD3" gate="G$1" x="312.42" y="134.62"/>
+<instance part="R7" gate="G$1" x="320.04" y="116.84"/>
+<instance part="C2" gate="G$1" x="330.2" y="109.22" rot="R180"/>
+<instance part="GND8" gate="1" x="330.2" y="101.6"/>
 </instances>
 <busses>
 </busses>
@@ -10623,6 +10640,8 @@ Source: http://cache.national.com/ds/LM/LM158.pdf</description>
 <wire x1="289.56" y1="149.86" x2="289.56" y2="154.94" width="0.1524" layer="91"/>
 <pinref part="X1" gate="-2" pin="1"/>
 <wire x1="289.56" y1="154.94" x2="292.1" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="GND6" gate="1" pin="GND"/>
+<junction x="289.56" y="149.86"/>
 </segment>
 <segment>
 <pinref part="GND3" gate="1" pin="GND"/>
@@ -10633,6 +10652,17 @@ Source: http://cache.national.com/ds/LM/LM158.pdf</description>
 <pinref part="GND5" gate="1" pin="GND"/>
 <pinref part="IC1" gate="P" pin="V-"/>
 <wire x1="347.98" y1="152.4" x2="347.98" y2="154.94" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="GND7" gate="1" pin="GND"/>
+<wire x1="289.56" y1="99.06" x2="289.56" y2="104.14" width="0.1524" layer="91"/>
+<pinref part="X2" gate="-2" pin="1"/>
+<wire x1="289.56" y1="104.14" x2="292.1" y2="104.14" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="GND8" gate="1" pin="GND"/>
+<pinref part="C2" gate="G$1" pin="1"/>
+<wire x1="330.2" y1="104.14" x2="330.2" y2="106.68" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="VIN" class="0">
@@ -11147,6 +11177,11 @@ Source: http://cache.national.com/ds/LM/LM158.pdf</description>
 <pinref part="JP1" gate="G$1" pin="2"/>
 <wire x1="177.8" y1="137.16" x2="187.96" y2="137.16" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="R6" gate="G$1" pin="2"/>
+<pinref part="VDD3" gate="G$1" pin="VDD"/>
+<wire x1="312.42" y1="129.54" x2="312.42" y2="132.08" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="AS0" class="0">
 <segment>
@@ -11229,6 +11264,49 @@ Source: http://cache.national.com/ds/LM/LM158.pdf</description>
 <pinref part="JP7" gate="G$1" pin="8"/>
 <wire x1="127" y1="30.48" x2="121.92" y2="30.48" width="0.1524" layer="91"/>
 <wire x1="121.92" y1="30.48" x2="121.92" y2="55.88" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$11" class="0">
+<segment>
+<pinref part="X2" gate="-1" pin="1"/>
+<wire x1="292.1" y1="109.22" x2="289.56" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="289.56" y1="109.22" x2="289.56" y2="116.84" width="0.1524" layer="91"/>
+<pinref part="R7" gate="G$1" pin="1"/>
+<wire x1="289.56" y1="116.84" x2="312.42" y2="116.84" width="0.1524" layer="91"/>
+<pinref part="R6" gate="G$1" pin="1"/>
+<wire x1="312.42" y1="116.84" x2="314.96" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="312.42" y1="119.38" x2="312.42" y2="116.84" width="0.1524" layer="91"/>
+<junction x="312.42" y="116.84"/>
+</segment>
+</net>
+<net name="N$12" class="0">
+<segment>
+<pinref part="R7" gate="G$1" pin="2"/>
+<pinref part="IC1" gate="B" pin="+IN"/>
+<wire x1="325.12" y1="116.84" x2="330.2" y2="116.84" width="0.1524" layer="91"/>
+<pinref part="C2" gate="G$1" pin="2"/>
+<wire x1="330.2" y1="116.84" x2="342.9" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="330.2" y1="114.3" x2="330.2" y2="116.84" width="0.1524" layer="91"/>
+<junction x="330.2" y="116.84"/>
+</segment>
+</net>
+<net name="AS1" class="0">
+<segment>
+<pinref part="IC1" gate="B" pin="-IN"/>
+<wire x1="342.9" y1="111.76" x2="340.36" y2="111.76" width="0.1524" layer="91"/>
+<wire x1="340.36" y1="111.76" x2="340.36" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="340.36" y1="101.6" x2="363.22" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="363.22" y1="101.6" x2="363.22" y2="114.3" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="B" pin="OUT"/>
+<wire x1="363.22" y1="114.3" x2="358.14" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="363.22" y1="114.3" x2="365.76" y2="114.3" width="0.1524" layer="91"/>
+<junction x="363.22" y="114.3"/>
+<label x="365.76" y="114.3" size="1.778" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="SW1" gate="A" pin="15"/>
+<wire x1="142.24" y1="45.72" x2="144.78" y2="45.72" width="0.1524" layer="91"/>
+<label x="144.78" y="45.72" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
 </nets>
