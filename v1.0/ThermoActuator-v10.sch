@@ -10600,7 +10600,7 @@ will be further integrated into the Sparkfun Library for other footprints.  It c
 <part name="LED2" library="led" deviceset="LED" device="CHIP-LED0805" value="Green"/>
 <part name="R1" library="rcl" deviceset="R-EU_" device="R0805" value="330"/>
 <part name="R2" library="rcl" deviceset="R-EU_" device="R0805" value="330"/>
-<part name="R3" library="rcl" deviceset="R-EU_" device="R0805" value="10k"/>
+<part name="R3" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="GND1" library="SparkFun" deviceset="GND" device=""/>
 <part name="GND2" library="SparkFun" deviceset="GND" device=""/>
 <part name="IC1" library="linear" deviceset="LM358" device="D"/>
