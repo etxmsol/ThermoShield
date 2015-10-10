@@ -522,46 +522,6 @@ will be further integrated into the Sparkfun Library for other footprints.  It c
 <rectangle x1="-0.2921" y1="-0.2921" x2="0.2921" y2="0.2921" layer="51"/>
 <rectangle x1="2.2479" y1="-0.2921" x2="2.8321" y2="0.2921" layer="51"/>
 </package>
-<package name="TACTILE-PTH">
-<description>&lt;b&gt;OMRON SWITCH&lt;/b&gt;</description>
-<wire x1="3.048" y1="1.016" x2="3.048" y2="2.54" width="0.2032" layer="51"/>
-<wire x1="3.048" y1="2.54" x2="2.54" y2="3.048" width="0.2032" layer="51"/>
-<wire x1="2.54" y1="-3.048" x2="3.048" y2="-2.54" width="0.2032" layer="51"/>
-<wire x1="3.048" y1="-2.54" x2="3.048" y2="-1.016" width="0.2032" layer="51"/>
-<wire x1="-2.54" y1="3.048" x2="-3.048" y2="2.54" width="0.2032" layer="51"/>
-<wire x1="-3.048" y1="2.54" x2="-3.048" y2="1.016" width="0.2032" layer="51"/>
-<wire x1="-2.54" y1="-3.048" x2="-3.048" y2="-2.54" width="0.2032" layer="51"/>
-<wire x1="-3.048" y1="-2.54" x2="-3.048" y2="-1.016" width="0.2032" layer="51"/>
-<wire x1="2.54" y1="-3.048" x2="2.159" y2="-3.048" width="0.2032" layer="51"/>
-<wire x1="-2.54" y1="-3.048" x2="-2.159" y2="-3.048" width="0.2032" layer="51"/>
-<wire x1="-2.54" y1="3.048" x2="-2.159" y2="3.048" width="0.2032" layer="51"/>
-<wire x1="2.54" y1="3.048" x2="2.159" y2="3.048" width="0.2032" layer="51"/>
-<wire x1="2.159" y1="3.048" x2="-2.159" y2="3.048" width="0.2032" layer="21"/>
-<wire x1="-2.159" y1="-3.048" x2="2.159" y2="-3.048" width="0.2032" layer="21"/>
-<wire x1="3.048" y1="0.998" x2="3.048" y2="-1.016" width="0.2032" layer="21"/>
-<wire x1="-3.048" y1="1.028" x2="-3.048" y2="-1.016" width="0.2032" layer="21"/>
-<wire x1="-2.54" y1="1.27" x2="-2.54" y2="0.508" width="0.2032" layer="51"/>
-<wire x1="-2.54" y1="-0.508" x2="-2.54" y2="-1.27" width="0.2032" layer="51"/>
-<wire x1="-2.54" y1="0.508" x2="-2.159" y2="-0.381" width="0.2032" layer="51"/>
-<circle x="0" y="0" radius="1.778" width="0.2032" layer="21"/>
-<pad name="1" x="-3.2512" y="2.2606" drill="1.016"/>
-<pad name="2" x="3.2512" y="2.2606" drill="1.016"/>
-<pad name="3" x="-3.2512" y="-2.2606" drill="1.016"/>
-<pad name="4" x="3.2512" y="-2.2606" drill="1.016"/>
-<text x="-2.54" y="3.81" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-</package>
-<package name="KSA_SEALED_TAC_SWITCH">
-<wire x1="0" y1="1.27" x2="0" y2="-1.27" width="0.127" layer="21"/>
-<wire x1="-1.27" y1="0" x2="1.27" y2="0" width="0.127" layer="21"/>
-<wire x1="-5.08" y1="3.81" x2="5.08" y2="3.81" width="0.127" layer="21"/>
-<wire x1="5.08" y1="3.81" x2="5.08" y2="-3.81" width="0.127" layer="21"/>
-<wire x1="5.08" y1="-3.81" x2="-5.08" y2="-3.81" width="0.127" layer="21"/>
-<wire x1="-5.08" y1="-3.81" x2="-5.08" y2="3.81" width="0.127" layer="21"/>
-<pad name="P$1" x="-3.81" y="2.54" drill="1" shape="square"/>
-<pad name="P$2" x="3.81" y="2.54" drill="1" shape="square"/>
-<pad name="P$3" x="-3.81" y="-2.54" drill="1" shape="square"/>
-<pad name="P$4" x="3.81" y="-2.54" drill="1" shape="square"/>
-</package>
 <package name="1X08">
 <wire x1="14.605" y1="1.27" x2="15.875" y2="1.27" width="0.2032" layer="21"/>
 <wire x1="15.875" y1="1.27" x2="16.51" y2="0.635" width="0.2032" layer="21"/>
@@ -1418,26 +1378,6 @@ will be further integrated into the Sparkfun Library for other footprints.  It c
 <pad name="1" x="0" y="0" drill="0.8" shape="long" rot="R90"/>
 <pad name="2" x="2.54" y="0" drill="0.8" shape="long" rot="R90"/>
 </package>
-<package name="TACTILE_SWITCH_SMD">
-<wire x1="-1.54" y1="-2.54" x2="-2.54" y2="-1.54" width="0.2032" layer="51"/>
-<wire x1="-2.54" y1="-1.24" x2="-2.54" y2="1.27" width="0.2032" layer="21"/>
-<wire x1="-2.54" y1="1.54" x2="-1.54" y2="2.54" width="0.2032" layer="51"/>
-<wire x1="-1.54" y1="2.54" x2="1.54" y2="2.54" width="0.2032" layer="21"/>
-<wire x1="1.54" y1="2.54" x2="2.54" y2="1.54" width="0.2032" layer="51"/>
-<wire x1="2.54" y1="1.24" x2="2.54" y2="-1.24" width="0.2032" layer="21"/>
-<wire x1="2.54" y1="-1.54" x2="1.54" y2="-2.54" width="0.2032" layer="51"/>
-<wire x1="1.54" y1="-2.54" x2="-1.54" y2="-2.54" width="0.2032" layer="21"/>
-<wire x1="1.905" y1="1.27" x2="1.905" y2="0.445" width="0.127" layer="51"/>
-<wire x1="1.905" y1="0.445" x2="2.16" y2="-0.01" width="0.127" layer="51"/>
-<wire x1="1.905" y1="-0.23" x2="1.905" y2="-1.115" width="0.127" layer="51"/>
-<circle x="0" y="0" radius="1.27" width="0.2032" layer="21"/>
-<smd name="1" x="-2.54" y="1.905" dx="0.762" dy="1.524" layer="1" rot="R90"/>
-<smd name="2" x="2.54" y="1.905" dx="0.762" dy="1.524" layer="1" rot="R90"/>
-<smd name="3" x="-2.54" y="-1.905" dx="0.762" dy="1.524" layer="1" rot="R90"/>
-<smd name="4" x="2.54" y="-1.905" dx="0.762" dy="1.524" layer="1" rot="R90"/>
-<text x="-0.889" y="1.778" size="0.4064" layer="25">&gt;NAME</text>
-<text x="-0.889" y="-2.032" size="0.4064" layer="27">&gt;Value</text>
-</package>
 </packages>
 <symbols>
 <symbol name="LETTER_L">
@@ -1570,27 +1510,6 @@ will be further integrated into the Sparkfun Library for other footprints.  It c
 <text x="-2.54" y="5.842" size="1.778" layer="95">&gt;NAME</text>
 <pin name="1" x="7.62" y="0" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
 <pin name="2" x="7.62" y="2.54" visible="pad" length="middle" direction="pas" swaplevel="1" rot="R180"/>
-</symbol>
-<symbol name="SWITCH-MOMENTARY">
-<wire x1="1.905" y1="0" x2="2.54" y2="0" width="0.254" layer="94"/>
-<wire x1="1.905" y1="4.445" x2="1.905" y2="3.175" width="0.254" layer="94"/>
-<wire x1="-1.905" y1="4.445" x2="-1.905" y2="3.175" width="0.254" layer="94"/>
-<wire x1="1.905" y1="4.445" x2="0" y2="4.445" width="0.254" layer="94"/>
-<wire x1="0" y1="4.445" x2="-1.905" y2="4.445" width="0.254" layer="94"/>
-<wire x1="0" y1="2.54" x2="0" y2="1.905" width="0.1524" layer="94"/>
-<wire x1="0" y1="1.27" x2="0" y2="0.635" width="0.1524" layer="94"/>
-<wire x1="0" y1="4.445" x2="0" y2="3.175" width="0.1524" layer="94"/>
-<wire x1="2.54" y1="-2.54" x2="2.54" y2="0" width="0.1524" layer="94"/>
-<wire x1="-2.54" y1="-2.54" x2="-2.54" y2="0" width="0.1524" layer="94"/>
-<wire x1="-2.54" y1="0" x2="1.905" y2="1.27" width="0.254" layer="94"/>
-<circle x="-2.54" y="0" radius="0.127" width="0.4064" layer="94"/>
-<circle x="2.54" y="0" radius="0.127" width="0.4064" layer="94"/>
-<text x="-2.54" y="6.35" size="1.778" layer="95">&gt;NAME</text>
-<text x="-2.54" y="-6.35" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="1" x="-5.08" y="0" visible="pad" length="short" direction="pas" swaplevel="2"/>
-<pin name="3" x="5.08" y="0" visible="pad" length="short" direction="pas" swaplevel="1" rot="R180"/>
-<pin name="4" x="5.08" y="-2.54" visible="pad" length="short" direction="pas" swaplevel="1" rot="R180"/>
-<pin name="2" x="-5.08" y="-2.54" visible="pad" length="short" direction="pas" swaplevel="2"/>
 </symbol>
 <symbol name="GND">
 <wire x1="-1.905" y1="0" x2="1.905" y2="0" width="0.254" layer="94"/>
@@ -2062,48 +1981,6 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <connects>
 <connect gate="G$1" pin="1" pad="1"/>
 <connect gate="G$1" pin="2" pad="2"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="TAC_SWITCH" prefix="S" uservalue="yes">
-<description>&lt;b&gt;Momentary Switch&lt;/b&gt;
-Button commonly used for reset or general input. Spark Fun Electronics SKU : COM-00097</description>
-<gates>
-<gate name="S" symbol="SWITCH-MOMENTARY" x="0" y="0"/>
-</gates>
-<devices>
-<device name="SMD" package="TACTILE_SWITCH_SMD">
-<connects>
-<connect gate="S" pin="1" pad="1"/>
-<connect gate="S" pin="2" pad="2"/>
-<connect gate="S" pin="3" pad="3"/>
-<connect gate="S" pin="4" pad="4"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-<device name="PTH" package="TACTILE-PTH">
-<connects>
-<connect gate="S" pin="1" pad="1"/>
-<connect gate="S" pin="2" pad="2"/>
-<connect gate="S" pin="3" pad="3"/>
-<connect gate="S" pin="4" pad="4"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-<device name="KSA_SEALED" package="KSA_SEALED_TAC_SWITCH">
-<connects>
-<connect gate="S" pin="1" pad="P$1"/>
-<connect gate="S" pin="2" pad="P$2"/>
-<connect gate="S" pin="3" pad="P$3"/>
-<connect gate="S" pin="4" pad="P$4"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -11220,16 +11097,16 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 <part name="LED9" library="led" deviceset="LED" device="CHIP-LED0805" value="Blue"/>
 <part name="R10" library="rcl" deviceset="R-EU_" device="R0805" value="330"/>
 <part name="VDD7" library="supply1" deviceset="VDD" device=""/>
-<part name="JP19" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
-<part name="JP20" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
-<part name="JP7" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
-<part name="JP8" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
-<part name="JP9" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
-<part name="JP10" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
-<part name="JP11" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
-<part name="JP12" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
-<part name="JP13" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
-<part name="JP14" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
+<part name="JP-T1" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
+<part name="JP20" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
+<part name="JP7" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
+<part name="JP8" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
+<part name="JP9" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
+<part name="JP10" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
+<part name="JP11" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
+<part name="JP12" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
+<part name="JP13" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
+<part name="JP14" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
 <part name="IC3" library="linear" deviceset="LM358" device="D"/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="R13" library="rcl" deviceset="R-EU_" device="R0805" value="100K"/>
@@ -11237,7 +11114,7 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 <part name="R17" library="rcl" deviceset="R-EU_" device="R1206" value="10K"/>
 <part name="C3" library="rcl" deviceset="C-EU" device="C1206" value="10nF"/>
 <part name="GND12" library="supply1" deviceset="GND" device=""/>
-<part name="JP21" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
+<part name="JP21" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
 <part name="VDD13" library="supply1" deviceset="VDD" device=""/>
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
 <part name="GND9" library="supply1" deviceset="GND" device=""/>
@@ -11246,7 +11123,7 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 <part name="R18" library="rcl" deviceset="R-EU_" device="R1206" value="10K"/>
 <part name="C4" library="rcl" deviceset="C-EU" device="C1206" value="10nF"/>
 <part name="GND13" library="supply1" deviceset="GND" device=""/>
-<part name="JP22" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
+<part name="JP22" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
 <part name="IC4" library="linear" deviceset="LM358" device="D"/>
 <part name="GND16" library="supply1" deviceset="GND" device=""/>
 <part name="R19" library="rcl" deviceset="R-EU_" device="R0805" value="100K"/>
@@ -11254,7 +11131,7 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 <part name="R23" library="rcl" deviceset="R-EU_" device="R1206" value="10K"/>
 <part name="C5" library="rcl" deviceset="C-EU" device="C1206" value="10nF"/>
 <part name="GND20" library="supply1" deviceset="GND" device=""/>
-<part name="JP23" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
+<part name="JP23" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
 <part name="VDD18" library="supply1" deviceset="VDD" device=""/>
 <part name="GND24" library="supply1" deviceset="GND" device=""/>
 <part name="GND17" library="supply1" deviceset="GND" device=""/>
@@ -11263,7 +11140,7 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 <part name="R24" library="rcl" deviceset="R-EU_" device="R1206" value="10K"/>
 <part name="C6" library="rcl" deviceset="C-EU" device="C1206" value="10nF"/>
 <part name="GND21" library="supply1" deviceset="GND" device=""/>
-<part name="JP24" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
+<part name="JP24" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
 <part name="IC5" library="linear" deviceset="LM358" device="D"/>
 <part name="GND18" library="supply1" deviceset="GND" device=""/>
 <part name="R21" library="rcl" deviceset="R-EU_" device="R0805" value="100K"/>
@@ -11271,7 +11148,7 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 <part name="R25" library="rcl" deviceset="R-EU_" device="R1206" value="10K"/>
 <part name="C7" library="rcl" deviceset="C-EU" device="C1206" value="10nF"/>
 <part name="GND22" library="supply1" deviceset="GND" device=""/>
-<part name="JP25" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
+<part name="JP25" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
 <part name="VDD19" library="supply1" deviceset="VDD" device=""/>
 <part name="GND25" library="supply1" deviceset="GND" device=""/>
 <part name="GND19" library="supply1" deviceset="GND" device=""/>
@@ -11280,9 +11157,7 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 <part name="R26" library="rcl" deviceset="R-EU_" device="R1206" value="10K"/>
 <part name="C8" library="rcl" deviceset="C-EU" device="C1206" value="10nF"/>
 <part name="GND23" library="supply1" deviceset="GND" device=""/>
-<part name="JP26" library="SparkFun-Connectors" deviceset="M02" device="2.54MM_SCREWTERM" value=""/>
-<part name="S2" library="SparkFun" deviceset="TAC_SWITCH" device="PTH"/>
-<part name="GND26" library="SparkFun" deviceset="GND" device=""/>
+<part name="JP26" library="SparkFun-Connectors" deviceset="M02" device="5MM" value="M025MM"/>
 <part name="LED10" library="led" deviceset="LED" device="CHIP-LED0805" value="Blue"/>
 <part name="R27" library="rcl" deviceset="R-EU_" device="R0805" value="330"/>
 <part name="VDD20" library="supply1" deviceset="VDD" device=""/>
@@ -11376,7 +11251,7 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 </instance>
 <instance part="R10" gate="G$1" x="226.06" y="172.72" rot="R90"/>
 <instance part="VDD7" gate="G$1" x="226.06" y="182.88"/>
-<instance part="JP19" gate="G$1" x="271.78" y="175.26"/>
+<instance part="JP-T1" gate="G$1" x="271.78" y="175.26"/>
 <instance part="JP20" gate="G$1" x="271.78" y="127"/>
 <instance part="JP7" gate="G$1" x="114.3" y="172.72"/>
 <instance part="JP8" gate="G$1" x="114.3" y="160.02"/>
@@ -11443,8 +11318,6 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 <instance part="C8" gate="G$1" x="416.56" y="15.24" rot="R180"/>
 <instance part="GND23" gate="1" x="416.56" y="7.62"/>
 <instance part="JP26" gate="G$1" x="378.46" y="20.32"/>
-<instance part="S2" gate="S" x="50.8" y="86.36" rot="R90"/>
-<instance part="GND26" gate="1" x="50.8" y="73.66"/>
 <instance part="LED10" gate="G$1" x="236.22" y="162.56" smashed="yes">
 <attribute name="NAME" x="239.776" y="157.988" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="236.22" y="164.719" size="1.778" layer="96" rot="R180"/>
@@ -11510,7 +11383,7 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 <segment>
 <pinref part="GND5" gate="1" pin="GND"/>
 <pinref part="GND6" gate="1" pin="GND"/>
-<pinref part="JP19" gate="G$1" pin="1"/>
+<pinref part="JP-T1" gate="G$1" pin="1"/>
 <wire x1="279.4" y1="175.26" x2="281.94" y2="175.26" width="0.1524" layer="91"/>
 <wire x1="281.94" y1="175.26" x2="281.94" y2="162.56" width="0.1524" layer="91"/>
 <junction x="281.94" y="162.56"/>
@@ -11628,16 +11501,6 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 <pinref part="GND23" gate="1" pin="GND"/>
 <pinref part="C8" gate="G$1" pin="1"/>
 <wire x1="416.56" y1="10.16" x2="416.56" y2="12.7" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="S2" gate="S" pin="1"/>
-<pinref part="GND26" gate="1" pin="GND"/>
-<wire x1="50.8" y1="81.28" x2="50.8" y2="78.74" width="0.1524" layer="91"/>
-<pinref part="S2" gate="S" pin="2"/>
-<wire x1="50.8" y1="78.74" x2="50.8" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="53.34" y1="81.28" x2="53.34" y2="78.74" width="0.1524" layer="91"/>
-<wire x1="53.34" y1="78.74" x2="50.8" y2="78.74" width="0.1524" layer="91"/>
-<junction x="50.8" y="78.74"/>
 </segment>
 </net>
 <net name="VIN" class="0">
@@ -11820,16 +11683,6 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 <pinref part="JP5" gate="G$1" pin="8"/>
 <wire x1="78.74" y1="132.08" x2="78.74" y2="134.62" width="0.1524" layer="91"/>
 <label x="78.74" y="134.62" size="1.778" layer="95" rot="R90" xref="yes"/>
-</segment>
-<segment>
-<pinref part="S2" gate="S" pin="3"/>
-<wire x1="50.8" y1="91.44" x2="50.8" y2="93.98" width="0.1524" layer="91"/>
-<pinref part="S2" gate="S" pin="4"/>
-<wire x1="53.34" y1="91.44" x2="53.34" y2="93.98" width="0.1524" layer="91"/>
-<wire x1="53.34" y1="93.98" x2="50.8" y2="93.98" width="0.1524" layer="91"/>
-<wire x1="50.8" y1="93.98" x2="50.8" y2="96.52" width="0.1524" layer="91"/>
-<junction x="50.8" y="93.98"/>
-<label x="50.8" y="96.52" size="1.778" layer="95" rot="R90" xref="yes"/>
 </segment>
 </net>
 <net name="D15" class="0">
@@ -12120,7 +11973,7 @@ Standard 10-pin 0.1" header. Use with straight break away headers (SKU : PRT-001
 <wire x1="292.1" y1="177.8" x2="294.64" y2="177.8" width="0.1524" layer="91"/>
 <wire x1="292.1" y1="180.34" x2="292.1" y2="177.8" width="0.1524" layer="91"/>
 <junction x="292.1" y="177.8"/>
-<pinref part="JP19" gate="G$1" pin="2"/>
+<pinref part="JP-T1" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="N$2" class="0">
