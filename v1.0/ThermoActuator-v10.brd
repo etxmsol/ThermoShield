@@ -300,6 +300,7 @@
 <text x="71.12" y="77.47" size="1.4224" layer="25" ratio="15">T-7</text>
 <text x="82.55" y="77.47" size="1.4224" layer="25" ratio="15">T-8</text>
 <wire x1="0" y1="80.01" x2="0" y2="0" width="0.254" layer="51"/>
+<text x="5.08" y="21.59" size="1.778" layer="1">copper top</text>
 </plain>
 <libraries>
 <library name="SparkFun">
