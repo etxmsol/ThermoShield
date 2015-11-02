@@ -284,13 +284,13 @@
 <wire x1="0" y1="0" x2="96.52" y2="0" width="0.254" layer="20" style="dashdot"/>
 <text x="2.159" y="17.145" size="1.016" layer="21" font="vector" ratio="15">ACTUATORS</text>
 <text x="2.54" y="15.24" size="1.778" layer="25" ratio="15">OUT1</text>
-<text x="12.7" y="15.24" size="1.778" layer="25" ratio="15">OUT2</text>
-<text x="22.86" y="15.24" size="1.778" layer="25" ratio="15">OUT3</text>
-<text x="33.02" y="15.24" size="1.778" layer="25" ratio="15">OUT4</text>
-<text x="43.18" y="15.24" size="1.778" layer="25" ratio="15">OUT5</text>
-<text x="53.34" y="15.24" size="1.778" layer="25" ratio="15">OUT6</text>
-<text x="63.5" y="15.24" size="1.778" layer="25" ratio="15">OUT7</text>
-<text x="73.66" y="15.24" size="1.778" layer="25" ratio="15">OUT8</text>
+<text x="13.97" y="15.24" size="1.778" layer="25" ratio="15">OUT2</text>
+<text x="25.4" y="15.24" size="1.778" layer="25" ratio="15">OUT3</text>
+<text x="36.83" y="15.24" size="1.778" layer="25" ratio="15">OUT4</text>
+<text x="48.26" y="15.24" size="1.778" layer="25" ratio="15">OUT5</text>
+<text x="59.69" y="15.24" size="1.778" layer="25" ratio="15">OUT6</text>
+<text x="71.12" y="15.24" size="1.778" layer="25" ratio="15">OUT7</text>
+<text x="82.55" y="15.24" size="1.778" layer="25" ratio="15">OUT8</text>
 <text x="2.54" y="77.47" size="1.4224" layer="25" ratio="15">T-1</text>
 <text x="13.97" y="77.47" size="1.4224" layer="25" ratio="15">T-2</text>
 <text x="25.4" y="77.47" size="1.4224" layer="25" ratio="15">T-3</text>
