@@ -11,18 +11,24 @@
 class AdcChannel
 {
 public:
+	AdcChannel();
 	AdcChannel(int analogPin);
 	virtual  ~AdcChannel() {};
 
 	bool isDue();
-	long getTemperature();
+	float getTemperature();
+	void activate();
+	bool isActive() { return mIsActive; }
 
 private:
 	int mAnalogPin;
 	long lastSampledTime;
+	bool mIsActive;
 
-	static const long samplePeriod = 10000;
+	static const long samplePeriod = 1000;
 	static const int Vin = 5;
+	static const float B = 3950;
+	static const float R0 = 100000;
 };
 
 
