@@ -33,6 +33,7 @@ Storage::Storage()
 	mIndex = 0;
 	mSDInserted = false;
 	mLastLog = 0;
+	mIsAnyActiveChannel = false;
 
 	Item defaultItem;
 	defaultItem.Temperature = 0;
@@ -207,6 +208,7 @@ bool Storage::begin()
 
 		if ( mItems[i].mActuators )
 		{
+			mIsAnyActiveChannel = true;
 			ADCs[i].activate();
 		}
 	}
@@ -287,7 +289,7 @@ void Storage::parseln(const char * line)
 			Serial1.print(" A=");
 			int aInt = atoi(a);
 
-			if( a <= CHANNEL_COUNT && a > 0 )
+			if( aInt <= CHANNEL_COUNT && aInt > 0 )
 			{
 				acts |= 1 << (aInt-1);
 				Serial1.print(aInt);
@@ -338,13 +340,21 @@ void Storage::temperatureReading(uint8_t item, float t)
 }
 
 
+// Storage::Advance *************************************************
+// ******************************************************************
+// advances to the next active item. If all items are inactive
+// keep the value of mIndex and exit the loop
+//
 void Storage::Advance()
 {
 	// a button press caused advance of the item for displaying. Skip
 	// inactive channels
 
+	if( !mIsAnyActiveChannel )
+		return;
+
 	do {
-		mIndex = mIndex + 1 == 8 ? 0 : mIndex + 1;
+		mIndex = mIndex + 1 == CHANNEL_COUNT ? 0 : mIndex + 1;
 	} while( !ADCs[mIndex].isActive() );
 }
 

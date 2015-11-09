@@ -42,6 +42,7 @@ public:
 
 
 	bool LogIfDue( DateTime );
+	bool isAnyActiveChannel() { return mIsAnyActiveChannel; }	//!< returns true if there is at least one active channel
 
 	int mIndex;			// currently selected item (for display)
 
@@ -53,6 +54,8 @@ private:
 
 	bool mSDInserted;
 	long mLastLog;
+
+	bool mIsAnyActiveChannel;
 };
 
 

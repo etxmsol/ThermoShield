@@ -162,49 +162,59 @@ void loop()
 
 	// update LCD display if necessary
 
-	if(CurrentIndex != Store.mIndex || Store.mItems[Store.mIndex].mIsDirty)
+	if( Store.isAnyActiveChannel() == true )
 	{
-		CurrentIndex = Store.mIndex;
-		lcd.home (); // set cursor to 0,0
-		lcd.print("CH");
-		lcd.print(CurrentIndex + 1);
-		lcd.print(" ");
-		lcd.print( Store.mItems[Store.mIndex].Temperature );
-		lcd.print("C ");
-		lcd.print( Store.mItems[Store.mIndex].mIsOn ? "ON     " : "OFF    " );
-		Store.mItems[Store.mIndex].mIsDirty = false;
-		lcd.setCursor (0,1);        // go to start of 2nd line
+		if(CurrentIndex != Store.mIndex || Store.mItems[Store.mIndex].mIsDirty)
+		{
+			CurrentIndex = Store.mIndex;
+			lcd.home (); // set cursor to 0,0
+			lcd.print("CH");
+			lcd.print(CurrentIndex + 1);
+			lcd.print(" ");
+			lcd.print( Store.mItems[Store.mIndex].Temperature );
+			lcd.print("C ");
+			lcd.print( Store.mItems[Store.mIndex].mIsOn ? "ON     " : "OFF    " );
+			Store.mItems[Store.mIndex].mIsDirty = false;
+			lcd.setCursor (0,1);        // go to start of 2nd line
 
-		if( Store.mItems[Store.mIndex].mItemState == Item::forced_off )
-		{
-			lcd.print( "FORCE OFF" );
-		}
-		else
-		{
-			if( Store.mItems[Store.mIndex].mItemState == Item::forced_on )
+			if( Store.mItems[Store.mIndex].mItemState == Item::forced_off )
 			{
-				lcd.print( "FORCE ON " );
+				lcd.print( "FORCE OFF" );
 			}
 			else
 			{
-				lcd.print( Store.mItems[Store.mIndex].mLow );
-				lcd.print("..");
-				lcd.print( Store.mItems[Store.mIndex].mHigh );
-				lcd.print("C ");
+				if( Store.mItems[Store.mIndex].mItemState == Item::forced_on )
+				{
+					lcd.print( "FORCE ON " );
+				}
+				else
+				{
+					lcd.print( Store.mItems[Store.mIndex].mLow );
+					lcd.print("..");
+					lcd.print( Store.mItems[Store.mIndex].mHigh );
+					lcd.print("C ");
+				}
 			}
-		}
 
-		// list controlled actuators
-		lcd.print("A:");
+			// list controlled actuators
+			lcd.print("A:");
 
-		for( int i = 0; i < CHANNEL_COUNT; i++ )
-		{
-			if( Store.mItems[Store.mIndex].mActuators & (1 << i) )
+			for( int i = 0; i < CHANNEL_COUNT; i++ )
 			{
-				lcd.print((char)(i + '1'));
+				if( Store.mItems[Store.mIndex].mActuators & (1 << i) )
+				{
+					lcd.print((char)(i + '1'));
+				}
 			}
+			lcd.print("     ");
 		}
-		lcd.print("     ");
+	}
+	else
+	{
+		lcd.home (); // set cursor to 0,0
+		lcd.print("ALL CHANNELS");
+		lcd.setCursor (0,1);        // go to start of 2nd line
+		lcd.print("INACTIVE");
 	}
 
 
