@@ -1,8 +1,14 @@
-/*
- * Button.cpp
+/*******************************************************************************
+ ******************************* Copyright 2015 ********************************
+ *******************************************************************************
  *
- *  Created on: 19 okt 2015
- *      Author: Mikhail
+ * Button class
+ *
+ * Created on: 		2015-11-05
+ * Modified on:
+ * Author:			Mikhail Soloviev
+ *
+ *******************************************************************************
  */
 
 #include "Arduino.h"
@@ -11,16 +17,21 @@
 Button::Button(int pin) : mState(idle), mPin(pin), mButtonState(LOW), lastDebounceTime(0), lastPressAndHoldTime(0),
 						  lastButtonState(LOW)
 {
-	pinMode(mPin, INPUT);
 }
+
+
 
 Button::State Button::getState()
 {
+	unsigned long ms = millis();
+
+	// provide for the wrap around of millis()
+
 	// if the button entered press_hold state, it shall remain in that
 	// until the state is reset by the owner. Until that the pin readings are
 	// not important
 
-	if(lastPressAndHoldTime && ((millis() - lastPressAndHoldTime) > pressAndHoldDelay))
+	if(lastPressAndHoldTime && (ms < lastPressAndHoldTime || (ms - lastPressAndHoldTime) > pressAndHoldDelay))
 	{
 		mState = press_hold;
 		return mState;
