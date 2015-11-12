@@ -13,18 +13,20 @@
 
 #include "actuator.h"
 
-Actuator::Actuator(uint8_t id)
+Actuator::Actuator(uint8_t id, bool isActiveHigh)
 {
 	mId = id;
 	mChannels = 0;
+	mActiveHigh = isActiveHigh;
 	pinMode(A8+mId, OUTPUT);
+	digitalWrite(A8+mId, mActiveHigh ? LOW : HIGH);
 }
 
 
 void Actuator::activate(uint8_t adcChannel)
 {
 	mChannels |= 1 << adcChannel;
-	digitalWrite(A8+mId, LOW);
+	digitalWrite(A8+mId, mActiveHigh ? HIGH : LOW);
 }
 
 
@@ -34,6 +36,6 @@ void Actuator::deactivate(uint8_t adcChannel)
 
 	if(!mChannels)
 	{
-		digitalWrite(A8+mId, HIGH);
+		digitalWrite(A8+mId, mActiveHigh ? LOW : HIGH);
 	}
 }

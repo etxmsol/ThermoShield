@@ -25,8 +25,8 @@
 class Actuator
  {
  public:
-	 Actuator() : mId(0), mChannels(0) {};
-	 Actuator(uint8_t id);
+	 Actuator() : mId(0), mChannels(0), mActiveHigh(true) {};
+	 Actuator(uint8_t id, bool isActiveHigh);
 	 virtual ~Actuator(){};
 
 	 /*!
@@ -84,6 +84,20 @@ class Actuator
 	  * This is a bit mask. The corresponding ADC bit is set by activate() and reset by deactivate()
 	  */
 	 uint8_t mChannels;
+
+	 /*!
+	  * @brief	What to do with the digital pin when activating
+	  *
+	  * normally the corresponding digital output shall be driven high in order to activate.
+	  * This is because it is followed by the ULN2003D circuit, which is basically an array of inverters. When
+	  * we drive the output high, the ULN drags the output to the ground and the relay gets activated.
+	  *
+	  * However there are only 7 channels in the ULN2003. The 8-th one we have is special. The digital
+	  * pin of the ATMEGA2560 can source enough current to control the selected relay board without any
+	  * driver. So the 8-th one drives the relay directly. In this case we need to pull to the ground in order to
+	  * activate.
+	  */
+	 bool mActiveHigh;
  };
 
 

@@ -16,13 +16,18 @@
 #include "actuator.h"
 
 
+// CONSTANTS
+static const uint8_t BUTTON_PIN = 2;
+static const uint8_t ALARM_LED_PIN = 3;
+static const char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
-Button * b = NULL;		// create the object in setup, so that all button initialization
-						// is done in the constructor, not in setup() body
+// Global data
+
+Button b(BUTTON_PIN);
+
 AdcChannel ADCs[8];
 
 LiquidCrystal_I2C	lcd(0x27,2,1,0,4,5,6,7); // 0x27 is the I2C bus address for an unmodified backpack
-char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 RTC_DS1307 rtc;
 
@@ -32,15 +37,21 @@ Storage Store;
 int CurrentIndex = -1;
 unsigned long notTooOftenCounter = 0;
 
-static const uint8_t ALARM_LED_PIN = 3;
 
-//The setup function is called once at startup of the sketch
+
+
 void setup()
 {
+	// ALRAM
 	pinMode(ALARM_LED_PIN, OUTPUT);
 	digitalWrite( ALARM_LED_PIN, LOW );
 
-	b = new Button(2);
+	// must "begin" the button to get proper pin assignment/muxing
+	b.begin();
+
+	// initializing ADC channels. The channels 0...7 are assigned to the
+	// pins A0...A7. Note that the display and the config.txt files, as well as
+	// the shield's silk layer use enumeration 1 to 8
 
 	ADCs[0] = AdcChannel(A0);
 	ADCs[1] = AdcChannel(A1);
@@ -51,14 +62,20 @@ void setup()
 	ADCs[6] = AdcChannel(A6);
 	ADCs[7] = AdcChannel(A7);
 
-	Actuators[0] = Actuator(0);
-	Actuators[1] = Actuator(1);
-	Actuators[2] = Actuator(2);
-	Actuators[3] = Actuator(3);
-	Actuators[4] = Actuator(4);
-	Actuators[5] = Actuator(5);
-	Actuators[6] = Actuator(6);
-	Actuators[7] = Actuator(7);
+	// initializing actuators. The Id is 0 to 7, a bit number in
+	// actuator byte of the ADC channel. The mapping to the pin is
+	// pin = A8 + Id
+
+	Actuators[0] = Actuator(0, true);
+	Actuators[1] = Actuator(1, true);
+	Actuators[2] = Actuator(2, true);
+	Actuators[3] = Actuator(3, true);
+	Actuators[4] = Actuator(4, true);
+	Actuators[5] = Actuator(5, true);
+	Actuators[6] = Actuator(6, true);
+	Actuators[7] = Actuator(7, false);		// the last actuator is not connected through ULN2003 but directly
+
+	// debugging channel
 
 	Serial1.begin(9600);
 	while (!Serial1)
@@ -66,22 +83,16 @@ void setup()
 	  delay(100);
 	}
 
-	if (! rtc.begin())
-	{
-		Serial1.println("Couldn't find RTC");
-	}
-	else
-	{
-		Serial1.println("RTC detected");
-	}
+	// The Real Time Clock
 
-	Serial1.println("Checking if RTC is running");
+	rtc.begin();			// returns bool, but is never false
+
 	if(rtc.isrunning())
 		Serial1.println("RTC is running");
 	else
 	{
 		Serial1.println("RTC is NOT running");
-		rtc.adjust(DateTime(__DATE__, __TIME__));
+		rtc.adjust(DateTime(__DATE__, __TIME__));		// setup the current date and time initially
 	}
 
     DateTime now = rtc.now();
@@ -117,13 +128,13 @@ void setup()
 // The loop function is called in an endless loop
 void loop()
 {
-	switch(b->getState())
+	switch(b.getState())
 	{
 	case Button::pressed:		// if press and hold is allowed, the pressed state should not be used
 		break;
 	case Button::released:
 		Serial1.println("Released condition");
-		b->resetState();
+		b.resetState();
 
 		Store.Advance();
 
@@ -143,7 +154,7 @@ void loop()
 			Store.mItems[Store.mIndex].mItemState = Item::normal;
 			break;
 		}
-		b->resetState();
+		b.resetState();
 		break;
 	default:;
 
