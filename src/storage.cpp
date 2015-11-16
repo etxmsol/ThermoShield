@@ -7,10 +7,31 @@
 
 #include <SD.h>
 #include <EEPROM.h>
+#include <avr/pgmspace.h>
 #include "storage.h"
 #include <string.h>
 #include "actuator.h"
 #include "adcChannel.h"
+
+const char configFileHeader[] PROGMEM = {
+"*********************************************************************\n\
+* This is the configuration file config.txt. All the lines, not\n\
+* starting with \"CH\" are ignored by the parser. \n\
+*\n\
+* The following format applies:\n\
+*  CH<x> <TempLow> <TempHigh> [A:<y1> [y2 [y3 ...]]] [ItemState]\n\
+* \n\
+*  where x is the value 1 to 8, corresponding to ADC channels\n\
+*        TempLow is the lower temperature limit in C, e.g. 20 \n\
+* 	   TempHigh is the higher temperature limit in C, e.g. 22\n\
+* 	   y is the actuator that is affected by this ADC\n\
+* 	   ItemState is an optional parameter overriding the set limits.\n\
+* 				 The values are ON (force on), OFF (force off) and none\n\
+* 				 (the temperature limits are used)\n\
+* \n\
+* Example:\n\
+*  CH4 20 22 A:4 5 6 \n\
+**********************************************************************\n\n"};
 
 // change this to match your SD shield or module;
 // Arduino Ethernet shield: pin 4
@@ -104,8 +125,15 @@ bool Storage::begin()
 					if(c == '\n')
 					{
 						*bufPtr = 0;
-						parseln(buf);
 						bufPtr = buf;
+
+						if( memcmp( buf, "CH", 2 ) )		// ignore all lines not starting with "CH"
+							continue;
+
+						if( parseln( buf ) == false )
+						{
+							return false;
+						}
 					}
 				}
 				// close the file:
@@ -170,6 +198,14 @@ bool Storage::begin()
 
 			Serial1.println("config.txt: creating configuration");
 
+			// insert the header
+
+			int len = strlen_P( configFileHeader );
+			for (int k = 0; k < len; k++)
+			{
+				cfgFile.print( static_cast<char>(pgm_read_byte_near( configFileHeader + k ) ) );
+			}
+
 			for( int i = 0; i < CHANNEL_COUNT; i++ )
 			{
 				char buf[256];
@@ -222,7 +258,7 @@ bool Storage::begin()
 
 
 
-void Storage::parseln(const char * line)
+bool Storage::parseln( const char * line )
 {
 	char lBuf[256];
 	strcpy(lBuf, line);
@@ -231,15 +267,18 @@ void Storage::parseln(const char * line)
 	uint8_t acts = 0;		// bit mask of the controlled actuators
 
 	char * ch = strstr(lBuf, "CH");
+
 	if(!ch)
-		return;
+	{
+		return true;
+	}
 
 	int chId = *(ch+2)-'1';
 
 	if(chId < 0 || chId > 7)
 	{
 		Serial1.println("Channel ID out of range (1...8)");
-		return;
+		return false;
 	}
 
 	Serial1.print("CH");
@@ -252,7 +291,7 @@ void Storage::parseln(const char * line)
 	{
 		mItems[chId].mActuators = 0;		// the default Item maps to an actuator, remove this mapping
 		Serial1.println(" inactive channel");
-		return;
+		return true;
 	}
 
 	Serial1.print(" mLow=");
@@ -262,7 +301,7 @@ void Storage::parseln(const char * line)
 	if(!(pch = strtok (NULL," ")))
 	{
 		Serial1.println(" Malformed line");
-		return;		// TODO: revert to default
+		return false;
 	}
 
 	Serial1.print(" mHigh=");
@@ -276,7 +315,7 @@ void Storage::parseln(const char * line)
 	{
 		Serial1.println(" No actuators!?");
 		mItems[chId].mActuators = 0;
-		return;
+		return true;
 	}
 
 	strcpy(lBuf, line);
@@ -301,14 +340,16 @@ void Storage::parseln(const char * line)
 			}
 			else
 			{
-				Serial1.println( "Config error. Actuator value out of range (1..8)" );
+				Serial1.print(aInt);
+				Serial1.println( " <== Actuator value out of range (1..8)" );
+				return false;
 			}
 		}
 		Serial1.println();
 
 		mItems[chId].mActuators = acts;
 	}
-
+	return true;
 }
 
 
