@@ -73,6 +73,8 @@ bool Storage::begin()
 	}
 	else
 	{
+		isSD = true;			// the SD card is at least inserted
+
 		// open the file. note that only one file can be open at a time,
 		// so you have to close this one before opening another.
 
@@ -82,6 +84,8 @@ bool Storage::begin()
 
 		if( cfgFileExists )
 		{
+			Serial1.println( "config.txt found" );
+
 			cfgFile = SD.open("config.txt");
 
 			if (cfgFile)
@@ -106,13 +110,16 @@ bool Storage::begin()
 				}
 				// close the file:
 				cfgFile.close();
-				isSD = true;			// the SD card is at least inserted
 			}
 			else
 			{
 				// if the file didn't open, print an error:
 				Serial1.println("error opening config.txt for reading");
 			}
+		}
+		else
+		{
+			Serial1.println( "config.txt does not exist" );
 		}
 	}
 
