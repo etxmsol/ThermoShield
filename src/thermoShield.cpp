@@ -120,6 +120,7 @@ void setup()
 	if(!Store.begin())
 	{
 		Serial1.println("Error initializing the storage");
+		digitalWrite( ALARM_LED_PIN, HIGH );
 	}
 
 }
