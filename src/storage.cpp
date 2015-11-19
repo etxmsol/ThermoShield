@@ -14,24 +14,31 @@
 #include "adcChannel.h"
 
 const char configFileHeader[] PROGMEM = {
-"*********************************************************************\n\
-* This is the configuration file config.txt. All the lines, not\n\
-* starting with \"CH\" are ignored by the parser. \n\
-*\n\
-* The following format applies:\n\
-*  CH<x> <TempLow> <TempHigh> [A:<y1> [y2 [y3 ...]]] [ItemState]\n\
-* \n\
-*  where x is the value 1 to 8, corresponding to ADC channels\n\
-*        TempLow is the lower temperature limit in C, e.g. 20 \n\
-* 	   TempHigh is the higher temperature limit in C, e.g. 22\n\
-* 	   y is the actuator that is affected by this ADC\n\
-* 	   ItemState is an optional parameter overriding the set limits.\n\
-* 				 The values are ON (force on), OFF (force off) and none\n\
-* 				 (the temperature limits are used)\n\
-* \n\
-* Example:\n\
-*  CH4 20 22 A:4 5 6 \n\
-**********************************************************************\n\n"};
+"******************************************************************************\r\n\
+* This is the configuration file config.txt. All the lines, not\r\n\
+* starting with \"CH\" are ignored by the parser. The parser is not very\r\n\
+* intelligent. So be careful with the format.\r\n\
+*\r\n\
+* The following format applies:\r\n\
+*  CH<x> <TempLow> <TempHigh> [A:<y1> [y2 [y3 ...]]]\r\n\
+* \r\n\
+*  where <x>        is the value 1 to 8, corresponding to ADC channels\r\n\
+*        <TempLow>  is the lower temperature limit in C, e.g. 20 \r\n\
+*        <TempHigh> is the higher temperature limit in C, e.g. 22\r\n\
+*        <y>        is the actuator that is affected by this ADC\r\n\
+* \r\n\
+* Example: ADC T-4 controls OUT 4, 5 and 6\r\n\
+*  CH4 20 22 A:4 5 6 \r\n\
+* \r\n\
+* Example: ADC T-5 is inactive. It will be skipped in the LCD\r\n\
+*  CH5\r\n\
+* \r\n\
+* Notice, the CHx line removed from the file would mean default configuration\r\n\
+* for this channel, and not that it is inactive\r\n\
+*\r\n\
+* If you screwed up the configuration, just remove this file. The default\r\n\
+* configuration will be created when the SD card is inserted and reset is done.\r\n\
+*******************************************************************************\r\n\r\n"};
 
 // change this to match your SD shield or module;
 // Arduino Ethernet shield: pin 4
@@ -47,7 +54,7 @@ extern AdcChannel ADCs[8];
 static const int LOGGING_INTERVAL = 3600;		// seconds
 
 static const byte MAGIC_EEPROM_BYTE1 = 0x01;	// version
-static const byte MAGIC_EEPROM_BYTE2 = 0x00;	// revision
+static const byte MAGIC_EEPROM_BYTE2 = 0x01;	// revision
 
 Storage::Storage()
 {
@@ -78,6 +85,26 @@ bool Storage::begin()
 	bool isSD = false;
 	bool cfgFileExists = false;
 
+	byte mb1 = EEPROM.read( 0 );		// version
+	byte mb2 = EEPROM.read( 1 );		// revision
+
+	char s[32];
+	sprintf( s, "EEPROM Magic Byte 1 = %02X", mb1 );
+	Serial1.println( s );
+	sprintf( s, "EEPROM Magic Byte 2 = %02X", mb2 );
+	Serial1.println( s );
+
+	bool isValidConfigEEPROM = (mb1 == MAGIC_EEPROM_BYTE1 && mb2 == MAGIC_EEPROM_BYTE2);
+
+	if( isValidConfigEEPROM )
+	{
+		Serial1.println( "EEPROM contains valid configuration" );
+	}
+	else
+	{
+		Serial1.println( "EEPROM does not contain valid configuration" );
+	}
+
 
 	Serial1.println("\nInitializing SD card...");
 
@@ -95,6 +122,8 @@ bool Storage::begin()
 	else
 	{
 		isSD = true;			// the SD card is at least inserted
+
+		Serial1.println( "Populating Items from SD-card" );
 
 		// open the file. note that only one file can be open at a time,
 		// so you have to close this one before opening another.
@@ -121,7 +150,9 @@ bool Storage::begin()
 				{
 					int c = cfgFile.read();
 					//Serial1.write(c);
-					*bufPtr++ = c;
+					if(c == '\r')
+						continue;
+
 					if(c == '\n')
 					{
 						*bufPtr = 0;
@@ -135,14 +166,21 @@ bool Storage::begin()
 							return false;
 						}
 					}
+					else
+					{
+						*bufPtr++ = c;
+					}
+
 				}
 				// close the file:
 				cfgFile.close();
 			}
 			else
 			{
-				// if the file didn't open, print an error:
+				// if the file didn't open, print an error. Someone probably
+				// removed the SD card. It is an error situation. Raise an alarm
 				Serial1.println("error opening config.txt for reading");
+				return false;
 			}
 		}
 		else
@@ -151,35 +189,27 @@ bool Storage::begin()
 		}
 	}
 
-	// if reading SD configuration fails, the second alternative will be the configuration
-	// stored in the EEPROM.
+	// if reading SD configuration fails, the second alternative will be populating Items from EEPROM.
+	// The item state is only stored in EEPROM. So read it in for valid EEPROM configurations
 
-	if( isSD == false || cfgFileExists == false )
+	if( isValidConfigEEPROM )
 	{
-		byte ptr = 0;
-		byte mb1 = EEPROM.read( ptr++ );
-		byte mb2 = EEPROM.read( ptr++ );
+		if( isSD == false )
+			Serial1.println( "Populating Items from EEPROM" );
 
-		char s[32];
-		sprintf( s, "EEPROM Magic Byte 1 = %02X", mb1 );
-		Serial1.println( s );
-		sprintf( s, "EEPROM Magic Byte 2 = %02X", mb2 );
-		Serial1.println( s );
+		byte ptr = 2;				// skip the first two bytes (version, revision)
 
-		if( mb1 == MAGIC_EEPROM_BYTE1 && mb2 == MAGIC_EEPROM_BYTE2 )
+		for( byte i = 0; i < CHANNEL_COUNT; i++ )
 		{
-			Serial1.println( "EEPROM contains valid configuration" );
-
-			for( byte i = 0; i < CHANNEL_COUNT; i++ )
+			if( isSD == false )
 			{
-				mItems[i].mLow = (int)EEPROM.read( ptr++ );
-				mItems[i].mHigh = (int)EEPROM.read( ptr++ );
-				mItems[i].mActuators = EEPROM.read( ptr++ );
+				mItems[i].mLow = (int)EEPROM.read( ptr );
+				mItems[i].mHigh = (int)EEPROM.read( ptr + 1 );
+				mItems[i].mActuators = EEPROM.read( ptr + 2 );
 			}
-		}
-		else
-		{
-			Serial1.println( "EEPROM does not contain valid configuration" );
+			mItems[i].mItemState = static_cast<Item::ItemState_t>(EEPROM.read( ptr + 3 ));
+
+			ptr += 4;				// move to the next record
 		}
 	}
 
@@ -196,7 +226,7 @@ bool Storage::begin()
 			// if the SD card is in but the config file is not found, the default
 			// file will be generated and stored on the SD card (and in EEPROM)
 
-			Serial1.println("config.txt: creating configuration");
+			Serial1.println("config.txt: creating default configuration");
 
 			// insert the header
 
@@ -209,8 +239,18 @@ bool Storage::begin()
 			for( int i = 0; i < CHANNEL_COUNT; i++ )
 			{
 				char buf[256];
-				sprintf(buf, "CH%d %d %d A:%d", i+1, mItems[i].mLow, mItems[i].mHigh, mItems[i].mActuators);
-				cfgFile.println(buf);
+				sprintf(buf, "CH%d %d %d A:", i+1, mItems[i].mLow, mItems[i].mHigh );
+				cfgFile.print(buf);
+
+				for( int k = 0; k < CHANNEL_COUNT; k++ )
+				{
+					if( mItems[i].mActuators & (1 << k) )
+					{
+						cfgFile.print( ' ' );
+						cfgFile.print( (char)(k + '1') );
+					}
+				}
+				cfgFile.println();
 			}
 
 			// close the file:
@@ -238,11 +278,17 @@ bool Storage::begin()
 		EEPROM.write( ptr++, mItems[i].mHigh );
 		EEPROM.write( ptr++, mItems[i].mActuators );
 
+		if( !isValidConfigEEPROM )
+			EEPROM.write( ptr, mItems[i].mItemState );
+		ptr++;
+
 		sprintf( b, "mItems[%d].mLow=%d", i, mItems[i].mLow);
 		Serial1.println( b );
 		sprintf( b, "mItems[%d].mHigh=%d", i, mItems[i].mHigh);
 		Serial1.println( b );
 		sprintf( b, "mItems[%d].mActuators=0x%X", i, mItems[i].mActuators);
+		Serial1.println( b );
+		sprintf( b, "mItems[%d].mItemState=%d", i, mItems[i].mItemState );
 		Serial1.println( b );
 
 		// activate the corresponding ADC
@@ -257,7 +303,9 @@ bool Storage::begin()
 }
 
 
-
+// Storage::parseln *************************************************
+// ******************************************************************
+//
 bool Storage::parseln( const char * line )
 {
 	char lBuf[256];
@@ -450,4 +498,19 @@ bool Storage::LogIfDue( DateTime dt )
 		return true;
 	}
 	return true;
+}
+
+
+// Storage::setItemState ********************************************
+// ******************************************************************
+// this is a special setter. It not only updates the mItem but
+// updates the value in EEPROM
+//
+void Storage::setItemState(int index, Item::ItemState_t itemState)
+{
+	mItems[index].mItemState = itemState;
+
+	// find the relevant item in EEPROM and update only this byte
+
+	EEPROM.write( 2 + index * 4 + 3, itemState);
 }

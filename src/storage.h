@@ -10,7 +10,7 @@
 
 #include "RTClib.h"
 
-const int CHANNEL_COUNT = 8;
+#define CHANNEL_COUNT 8
 
 
 struct Item
@@ -59,10 +59,34 @@ public:
 	bool LogIfDue( DateTime );
 	bool isAnyActiveChannel() { return mIsAnyActiveChannel; }	//!< returns true if there is at least one active channel
 
+
+	//! Item accessors
+
+	void setTemperature(int index, float t) { mItems[index].Temperature = t; }
+	float getTemperature(int index) { return mItems[index].Temperature; }
+
+	void setLow(int index, int mLow) { mItems[index].mLow = mLow; }
+	int getLow(int index) { return mItems[index].mLow;  }
+
+	void setHigh(int index, int mHigh) { mItems[index].mHigh = mHigh; }
+	int getHigh(int index) { return mItems[index].mHigh;  }
+
+	void setDirty(int index, bool isDirty) { mItems[index].mIsDirty = isDirty; }
+	bool getDirty(int index) { return mItems[index].mIsDirty; }
+
+	void setActuators(int index, uint8_t as) {  mItems[index].mActuators = as; }
+	uint8_t getActuators(int index) {  return mItems[index].mActuators; }
+
+	void setIsOn(int index, bool isOn) {  mItems[index].mIsOn = isOn; }
+	bool getIsOn(int index) {  return mItems[index].mIsOn; }
+
+	void setItemState(int index, Item::ItemState_t mItemState);
+	Item::ItemState_t getItemState(int index) { return mItems[index].mItemState; }
+
 	int mIndex;			//!< currently selected item (for display)
 
-public:
-	Item mItems[8];
+private:
+	Item mItems[CHANNEL_COUNT];
 
 private:
 	bool parseln(const char*);

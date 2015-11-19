@@ -143,16 +143,16 @@ void loop()
 	case Button::press_hold:
 		Serial1.println("Press and hold condition");
 
-		switch( Store.mItems[Store.mIndex].mItemState )
+		switch( Store.getItemState(Store.mIndex) )
 		{
 		case Item::normal:
-			Store.mItems[Store.mIndex].mItemState = Item::forced_off;
+			Store.setItemState(Store.mIndex, Item::forced_off);
 			break;
 		case Item::forced_off:
-			Store.mItems[Store.mIndex].mItemState = Item::forced_on;
+			Store.setItemState(Store.mIndex, Item::forced_on);
 			break;
 		case Item::forced_on:
-			Store.mItems[Store.mIndex].mItemState = Item::normal;
+			Store.setItemState(Store.mIndex, Item::normal);
 			break;
 		}
 		b.resetState();
@@ -176,36 +176,29 @@ void loop()
 
 	if( Store.isAnyActiveChannel() == true )
 	{
-		if(CurrentIndex != Store.mIndex || Store.mItems[Store.mIndex].mIsDirty)
+		if(CurrentIndex != Store.mIndex || Store.getDirty(Store.mIndex))
 		{
 			CurrentIndex = Store.mIndex;
 			lcd.home (); // set cursor to 0,0
 			lcd.print("CH");
 			lcd.print(CurrentIndex + 1);
 			lcd.print(" ");
-			lcd.print( Store.mItems[Store.mIndex].Temperature );
+			lcd.print( Store.getTemperature(Store.mIndex) );
 			lcd.print("C ");
-			lcd.print( Store.mItems[Store.mIndex].mIsOn ? "ON     " : "OFF    " );
-			Store.mItems[Store.mIndex].mIsDirty = false;
+			lcd.print( Store.getIsOn(Store.mIndex) ? "ON     " : "OFF    " );
+			Store.setDirty(Store.mIndex, false);
 			lcd.setCursor (0,1);        // go to start of 2nd line
 
-			if( Store.mItems[Store.mIndex].mItemState == Item::forced_off )
+			if( Store.getItemState(Store.mIndex) == Item::forced_off || Store.getItemState(Store.mIndex) == Item::forced_on )
 			{
-				lcd.print( "FORCE OFF" );
+				lcd.print( "FORCED " );
 			}
 			else
 			{
-				if( Store.mItems[Store.mIndex].mItemState == Item::forced_on )
-				{
-					lcd.print( "FORCE ON " );
-				}
-				else
-				{
-					lcd.print( Store.mItems[Store.mIndex].mLow );
-					lcd.print("..");
-					lcd.print( Store.mItems[Store.mIndex].mHigh );
-					lcd.print("C ");
-				}
+				lcd.print( Store.getLow(Store.mIndex) );
+				lcd.print("..");
+				lcd.print( Store.getHigh(Store.mIndex) );
+				lcd.print("C ");
 			}
 
 			// list controlled actuators
@@ -213,7 +206,7 @@ void loop()
 
 			for( int i = 0; i < CHANNEL_COUNT; i++ )
 			{
-				if( Store.mItems[Store.mIndex].mActuators & (1 << i) )
+				if( Store.getActuators(Store.mIndex) & (1 << i) )
 				{
 					lcd.print((char)(i + '1'));
 				}
