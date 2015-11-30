@@ -11,6 +11,7 @@
 #include "RTClib.h"
 
 #define CHANNEL_COUNT 8
+#define EEPROM_ITEM_SZ 5
 
 
 struct Item
@@ -28,6 +29,7 @@ struct Item
 	uint8_t mActuators;		//!< bit 0 - Actuator 0, bit 7 - actuator 7
 	bool mIsOn;				//!< checks if the trigger conditions are satisfied
 	ItemState_t mItemState;
+	bool mIsLogging;
 };
 
 class Storage
@@ -82,6 +84,10 @@ public:
 
 	void setItemState(int index, Item::ItemState_t mItemState);
 	Item::ItemState_t getItemState(int index) { return mItems[index].mItemState; }
+
+	void setIsLogging(int index, bool isLogging) {  mItems[index].mIsLogging = isLogging; }
+	bool getIsLogging(int index) {  return mItems[index].mIsLogging; }
+
 
 	int mIndex;			//!< currently selected item (for display)
 

@@ -123,6 +123,10 @@ void setup()
 		digitalWrite( ALARM_LED_PIN, HIGH );
 	}
 
+	// the below makes sure the 1st active item is displayed upon start up. Otherwise
+	// the item 0 is displayed, even if inactive
+	Store.mIndex = CHANNEL_COUNT-1;
+	Store.Advance();
 }
 
 
@@ -211,7 +215,7 @@ void loop()
 					lcd.print((char)(i + '1'));
 				}
 			}
-			lcd.print("     ");
+			lcd.print("      ");
 		}
 	}
 	else

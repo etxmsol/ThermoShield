@@ -51,6 +51,8 @@ bool AdcChannel::isDue()
 float AdcChannel::getTemperature()
 {
 	long Vout = analogRead(mAnalogPin);	// voltage
+	Vout = Vout == 0 ? 1 : Vout;		// this precaution is needed when thermistor branch is grounded
+
 	lastSampledTime = millis();
 
 	// calculate thermistor resistance

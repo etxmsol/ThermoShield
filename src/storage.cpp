@@ -28,10 +28,13 @@ const char configFileHeader[] PROGMEM = {
 *        <y>        is the actuator that is affected by this ADC\r\n\
 * \r\n\
 * Example: ADC T-4 controls OUT 4, 5 and 6\r\n\
-*  CH4 20 22 A:4 5 6 \r\n\
+*  CH4 L:ON 20 22 A:4 5 6 \r\n\
+* \r\n\
+* Example: ADC T-3 is logging only\r\n\
+*  CH3 L:ON\r\n\
 * \r\n\
 * Example: ADC T-5 is inactive. It will be skipped in the LCD\r\n\
-*  CH5\r\n\
+*  CH5 L:OFF\r\n\
 * \r\n\
 * Notice, the CHx line removed from the file would mean default configuration\r\n\
 * for this channel, and not that it is inactive\r\n\
@@ -54,7 +57,7 @@ extern AdcChannel ADCs[8];
 static const int LOGGING_INTERVAL = 3600;		// seconds
 
 static const byte MAGIC_EEPROM_BYTE1 = 0x01;	// version
-static const byte MAGIC_EEPROM_BYTE2 = 0x01;	// revision
+static const byte MAGIC_EEPROM_BYTE2 = 0x02;	// revision
 
 Storage::Storage()
 {
@@ -70,6 +73,8 @@ Storage::Storage()
 	defaultItem.mIsDirty = true;
 	defaultItem.mIsOn = false;
 	defaultItem.mItemState = Item::normal;
+	defaultItem.mIsLogging = true;
+
 
 	for( int i = 0; i < CHANNEL_COUNT; i++ )
 	{
@@ -80,6 +85,10 @@ Storage::Storage()
 
 
 
+// Storage::begin ***************************************************
+// ******************************************************************
+// initialize the storage and parse the config
+//
 bool Storage::begin()
 {
 	bool isSD = false;
@@ -138,7 +147,7 @@ bool Storage::begin()
 
 			cfgFile = SD.open("config.txt");
 
-			if (cfgFile)
+			if ( cfgFile && cfgFile.available() )
 			{
 				Serial1.println("config.txt:");
 
@@ -146,15 +155,20 @@ bool Storage::begin()
 				char * bufPtr = buf;
 
 				// read from the file until there's nothing else in it:
-				while (cfgFile.available())
+				do
 				{
 					int c = cfgFile.read();
-					//Serial1.write(c);
+
 					if(c == '\r')
 						continue;
 
-					if(c == '\n')
+					if(c == '\n' || !cfgFile.available() /*EOF*/)
 					{
+						if( !cfgFile.available() )
+						{
+							*bufPtr++ = c;
+						}
+
 						*bufPtr = 0;
 						bufPtr = buf;
 
@@ -171,7 +185,8 @@ bool Storage::begin()
 						*bufPtr++ = c;
 					}
 
-				}
+				} while ( cfgFile.available() );
+
 				// close the file:
 				cfgFile.close();
 			}
@@ -206,10 +221,11 @@ bool Storage::begin()
 				mItems[i].mLow = (int)EEPROM.read( ptr );
 				mItems[i].mHigh = (int)EEPROM.read( ptr + 1 );
 				mItems[i].mActuators = EEPROM.read( ptr + 2 );
+				mItems[i].mIsLogging = EEPROM.read( ptr + 3 );
 			}
-			mItems[i].mItemState = static_cast<Item::ItemState_t>(EEPROM.read( ptr + 3 ));
+			mItems[i].mItemState = static_cast<Item::ItemState_t>(EEPROM.read( ptr + 4 ));
 
-			ptr += 4;				// move to the next record
+			ptr += EEPROM_ITEM_SZ;				// move to the next record
 		}
 	}
 
@@ -239,7 +255,7 @@ bool Storage::begin()
 			for( int i = 0; i < CHANNEL_COUNT; i++ )
 			{
 				char buf[256];
-				sprintf(buf, "CH%d %d %d A:", i+1, mItems[i].mLow, mItems[i].mHigh );
+				sprintf(buf, "CH%d L:%s %d %d A:", i+1, mItems[i].mIsLogging ? "ON" : "OFF", mItems[i].mLow, mItems[i].mHigh );
 				cfgFile.print(buf);
 
 				for( int k = 0; k < CHANNEL_COUNT; k++ )
@@ -277,6 +293,7 @@ bool Storage::begin()
 		EEPROM.write( ptr++, mItems[i].mLow);
 		EEPROM.write( ptr++, mItems[i].mHigh );
 		EEPROM.write( ptr++, mItems[i].mActuators );
+		EEPROM.write( ptr++, mItems[i].mIsLogging );
 
 		if( !isValidConfigEEPROM )
 			EEPROM.write( ptr, mItems[i].mItemState );
@@ -288,12 +305,14 @@ bool Storage::begin()
 		Serial1.println( b );
 		sprintf( b, "mItems[%d].mActuators=0x%X", i, mItems[i].mActuators);
 		Serial1.println( b );
+		sprintf( b, "mItems[%d].mIsLogging=%s", i, mItems[i].mIsLogging ? "ON" : "OFF");
+		Serial1.println( b );
 		sprintf( b, "mItems[%d].mItemState=%d", i, mItems[i].mItemState );
 		Serial1.println( b );
 
 		// activate the corresponding ADC
 
-		if ( mItems[i].mActuators )
+		if ( mItems[i].mActuators || mItems[i].mIsLogging )
 		{
 			mIsAnyActiveChannel = true;
 			ADCs[i].activate();
@@ -332,13 +351,34 @@ bool Storage::parseln( const char * line )
 	Serial1.print("CH");
 	Serial1.print(chId+1);		// towards the user all the channels are counted 1 to 8
 
-	const char * pch = strtok (ch," ");
+	// look for L:ON|L:OFF
+
+	if( strstr(line, "L:ON") )
+		mItems[chId].mIsLogging = true;
+	else
+	{
+		if( strstr(line, "L:OFF") )
+			mItems[chId].mIsLogging = false;
+		else
+		{
+			Serial1.println( "Missing logging switch" );
+			return false;
+		}
+	}
+
+	strcpy( lBuf, strstr(line, "L:") );
+	const char * pch = strtok( lBuf, " " );
 	pch = strtok (NULL," ");
 
 	if(!pch || !*pch)
 	{
 		mItems[chId].mActuators = 0;		// the default Item maps to an actuator, remove this mapping
-		Serial1.println(" inactive channel");
+
+		if( mItems[chId].mIsLogging )
+			Serial1.println(" logging only");
+		else
+			Serial1.println(" inactive channel");
+
 		return true;
 	}
 
@@ -361,13 +401,12 @@ bool Storage::parseln( const char * line )
 
 	if(!(pch = strtok (NULL," ")))
 	{
-		Serial1.println(" No actuators!?");
 		mItems[chId].mActuators = 0;
 		return true;
 	}
 
 	strcpy(lBuf, line);
-	char * actuators = strstr(line, "A:");
+	char * actuators = strstr( lBuf, "A:" );
 
 	if(actuators)
 	{
@@ -459,7 +498,7 @@ bool Storage::LogIfDue( DateTime dt )
 
 		for(int i = 0; i < CHANNEL_COUNT; i++ )
 		{
-			if( ADCs[i].isActive() )
+			if( mItems[i].mIsLogging )
 			{
 				char fileName[13];
 
@@ -512,5 +551,5 @@ void Storage::setItemState(int index, Item::ItemState_t itemState)
 
 	// find the relevant item in EEPROM and update only this byte
 
-	EEPROM.write( 2 + index * 4 + 3, itemState);
+	EEPROM.write( 2 + index * EEPROM_ITEM_SZ + 4, itemState);
 }
