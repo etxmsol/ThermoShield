@@ -1,8 +1,14 @@
-/*
- * Storage.h
+/*******************************************************************************
+ ******************************* Copyright 2015 ********************************
+ *******************************************************************************
  *
- *  Created on: 22 okt 2015
- *      Author: Mikhail
+ * Total storage class
+ *
+ * Created on: 		2015-10-25
+ * Modified on:
+ * Author:			Mikhail Soloviev
+ *
+ *******************************************************************************
  */
 
 #ifndef STORAGE_H_
@@ -30,6 +36,14 @@ struct Item
 	bool mIsOn;				//!< checks if the trigger conditions are satisfied
 	ItemState_t mItemState;
 	bool mIsLogging;
+
+	/*! this is an accumulator of activation
+	 *  It is the owner that decides when to reset the accumulator. It is a counter
+	 *  stepped up if the Item is found active at the check-point. The owner resets it once per logging period.
+	 *  The logging period consists of an arbitrary number of check-points. The logger should use this total
+	 *  count of check-points and the activity accumulator in order to calculate the active/total ratio
+	 */
+	long mCheckPointsActive;
 };
 
 class Storage
@@ -101,6 +115,8 @@ private:
 	long mLastLog;
 
 	bool mIsAnyActiveChannel;
+
+	long mCheckPointsTotal;
 };
 
 

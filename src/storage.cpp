@@ -1,8 +1,14 @@
-/*
- * Storage.cpp
+/*******************************************************************************
+ ******************************* Copyright 2015 ********************************
+ *******************************************************************************
  *
- *  Created on: 22 okt 2015
- *      Author: Mikhail
+ * Total storage class
+ *
+ * Created on: 		2015-10-25
+ * Modified on:
+ * Author:			Mikhail Soloviev
+ *
+ *******************************************************************************
  */
 
 #include <SD.h>
@@ -65,6 +71,7 @@ Storage::Storage()
 	mSDInserted = false;
 	mLastLog = 0;
 	mIsAnyActiveChannel = false;
+	mCheckPointsTotal = 0;
 
 	Item defaultItem;
 	defaultItem.Temperature = 0;
@@ -74,6 +81,7 @@ Storage::Storage()
 	defaultItem.mIsOn = false;
 	defaultItem.mItemState = Item::normal;
 	defaultItem.mIsLogging = true;
+	defaultItem.mCheckPointsActive = 0;
 
 
 	for( int i = 0; i < CHANNEL_COUNT; i++ )
@@ -492,6 +500,14 @@ void Storage::Advance()
 
 bool Storage::LogIfDue( DateTime dt )
 {
+	mCheckPointsTotal++;
+
+	for(int i = 0; i < CHANNEL_COUNT; i++ )
+	{
+		if( mItems[i].mIsOn )
+			mItems[i].mCheckPointsActive++;
+	}
+
 	if( mLastLog + LOGGING_INTERVAL < dt.secondstime() )
 	{
 		mLastLog = dt.secondstime();
@@ -516,7 +532,9 @@ bool Storage::LogIfDue( DateTime dt )
 				if (f)
 				{
 					char buf[256];
-					sprintf(buf, "%d%02d%02d %02d00  %d", dt.year(), dt.month(), dt.day(), dt.hour(), (int)(mItems[i].Temperature));
+					sprintf(buf, "%d%02d%02d %02d00  %d  %d%%", dt.year(), dt.month(), dt.day(), dt.hour(),
+							(int)(mItems[i].Temperature),
+							(int)((float)(mItems[i].mCheckPointsActive)/(float)mCheckPointsTotal * 100));
 					if( !f.println(buf) )
 					{
 						Serial1.println( "Failed to log. Is the SD inserted? Do not forget to reset after insertion" );
@@ -534,6 +552,14 @@ bool Storage::LogIfDue( DateTime dt )
 				}
 			}
 		}
+
+		mCheckPointsTotal = 0;
+
+		for(int i = 0; i < CHANNEL_COUNT; i++ )
+		{
+			mItems[i].mCheckPointsActive = 0;
+		}
+
 		return true;
 	}
 	return true;
