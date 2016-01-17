@@ -38,10 +38,22 @@ int CurrentIndex = -1;
 unsigned long notTooOftenCounter = 0;
 
 
+int freeRam ();
 
 
 void setup()
 {
+	// debugging channel
+
+	Serial1.begin(57600);
+	while (!Serial1)
+	{
+	  delay(100);
+	}
+
+	Serial1.print( "RAM at setup " );
+	Serial1.println( freeRam() );
+
 	// ALRAM
 	pinMode(ALARM_LED_PIN, OUTPUT);
 	digitalWrite( ALARM_LED_PIN, LOW );
@@ -75,17 +87,12 @@ void setup()
 	Actuators[6] = Actuator(6, true);
 	Actuators[7] = Actuator(7, false);		// the last actuator is not connected through ULN2003 but directly
 
-	// debugging channel
-
-	Serial1.begin(9600);
-	while (!Serial1)
-	{
-	  delay(100);
-	}
-
 	// The Real Time Clock
 
 	rtc.begin();			// returns bool, but is never false
+
+	Serial1.print( "RAM after rtc.begin " );
+	Serial1.println( freeRam() );
 
 	if(rtc.isrunning())
 		Serial1.println("RTC is running");
@@ -117,11 +124,18 @@ void setup()
 	lcd.setBacklightPin(3,POSITIVE);
 	lcd.setBacklight(HIGH);
 
+	Serial1.print( "RAM after lcd.begin " );
+	Serial1.println( freeRam() );
+
+
 	if(!Store.begin())
 	{
 		Serial1.println("Error initializing the storage");
 		digitalWrite( ALARM_LED_PIN, HIGH );
 	}
+	Serial1.print( "RAM after Storage.begin " );
+	Serial1.println( freeRam() );
+
 
 	// the below makes sure the 1st active item is displayed upon start up. Otherwise
 	// the item 0 is displayed, even if inactive
@@ -184,13 +198,15 @@ void loop()
 		{
 			CurrentIndex = Store.mIndex;
 			lcd.home (); // set cursor to 0,0
-			lcd.print("CH");
-			lcd.print(CurrentIndex + 1);
-			lcd.print(" ");
-			lcd.print( Store.getTemperature(Store.mIndex) );
-			lcd.print("C ");
-			lcd.print( Store.getIsOn(Store.mIndex) ? "ON     " : "OFF    " );
+
+			char buf[32];
+			float t = Store.getTemperature(Store.mIndex);
+			int intPart = t;
+			unsigned int fractPart = abs((t - (float)intPart)*10.0);
+
+			sprintf( buf, "CH%d %d.%01dC %s", CurrentIndex + 1, intPart, fractPart, Store.getIsOn(Store.mIndex) ? "ON     " : "OFF    ");
 			Store.setDirty(Store.mIndex, false);
+			lcd.print( buf );
 			lcd.setCursor (0,1);        // go to start of 2nd line
 
 			if( Store.getItemState(Store.mIndex) == Item::forced_off || Store.getItemState(Store.mIndex) == Item::forced_on )
@@ -230,7 +246,7 @@ void loop()
 	// log the data if time comes. Protect against wrap around
 
 	unsigned long ms = millis();
-	if( ms < notTooOftenCounter || notTooOftenCounter + 10000 < ms )
+	if( ms < notTooOftenCounter || notTooOftenCounter + 60000 < ms )
 	{
 		notTooOftenCounter = millis();
 

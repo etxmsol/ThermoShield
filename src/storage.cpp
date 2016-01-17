@@ -26,21 +26,23 @@ const char configFileHeader[] PROGMEM = {
 * intelligent. So be careful with the format.\r\n\
 *\r\n\
 * The following format applies:\r\n\
-*  CH<x> <TempLow> <TempHigh> [A:<y1> [y2 [y3 ...]]]\r\n\
+*  CH<x> <[C+|C-]<v>> <L:{ON|OFF}> [<TempLow> <TempHigh> [A:<y1> [y2 [y3 ...]]]]\r\n\
 * \r\n\
-*  where <x>        is the value 1 to 8, corresponding to ADC channels\r\n\
+*  where <C+v|C-v> 	is calibration value in one tenth of centigrade unit\r\n\
+*		 <L:>		is whether logging is enabled\r\n\
+*		 <x>        is the value 1 to 8, corresponding to ADC channels\r\n\
 *        <TempLow>  is the lower temperature limit in C, e.g. 20 \r\n\
 *        <TempHigh> is the higher temperature limit in C, e.g. 22\r\n\
 *        <y>        is the actuator that is affected by this ADC\r\n\
 * \r\n\
-* Example: ADC T-4 controls OUT 4, 5 and 6\r\n\
-*  CH4 L:ON 20 22 A:4 5 6 \r\n\
+* Example: ADC T-4 controls OUT 4, 5 and 6. Calibration correction +0.4C\r\n\
+*  CH4 C+4 L:ON 20 22 A:4 5 6 \r\n\
 * \r\n\
 * Example: ADC T-3 is logging only\r\n\
-*  CH3 L:ON\r\n\
+*  CH3 C+0 L:ON\r\n\
 * \r\n\
 * Example: ADC T-5 is inactive. It will be skipped in the LCD\r\n\
-*  CH5 L:OFF\r\n\
+*  CH5 C+0 L:OFF\r\n\
 * \r\n\
 * Notice, the CHx line removed from the file would mean default configuration\r\n\
 * for this channel, and not that it is inactive\r\n\
@@ -63,7 +65,21 @@ extern AdcChannel ADCs[8];
 static const int LOGGING_INTERVAL = 3600;		// seconds
 
 static const byte MAGIC_EEPROM_BYTE1 = 0x01;	// version
-static const byte MAGIC_EEPROM_BYTE2 = 0x02;	// revision
+static const byte MAGIC_EEPROM_BYTE2 = 0x04;	// revision
+
+
+// freeRam **********************************************************
+// ******************************************************************
+// this little cutie allows to know the remaining RAM size at any
+// point of execution. Just call:
+// Serial1.println( freeRam() );
+//
+int freeRam () {
+   extern int __heap_start, *__brkval;
+   int v;
+   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
+}
+
 
 Storage::Storage()
 {
@@ -82,6 +98,8 @@ Storage::Storage()
 	defaultItem.mItemState = Item::normal;
 	defaultItem.mIsLogging = true;
 	defaultItem.mCheckPointsActive = 0;
+	defaultItem.mToggleCounter = 0;
+	defaultItem.mCalibrationValue = 0;
 
 
 	for( int i = 0; i < CHANNEL_COUNT; i++ )
@@ -99,6 +117,9 @@ Storage::Storage()
 //
 bool Storage::begin()
 {
+	Serial1.print( "RAM at storage::begin " );
+	Serial1.println( freeRam() );
+
 	bool isSD = false;
 	bool cfgFileExists = false;
 
@@ -159,7 +180,7 @@ bool Storage::begin()
 			{
 				Serial1.println("config.txt:");
 
-				char buf[256];
+				char buf[128];
 				char * bufPtr = buf;
 
 				// read from the file until there's nothing else in it:
@@ -174,11 +195,14 @@ bool Storage::begin()
 					{
 						if( !cfgFile.available() )
 						{
+							Serial1.println( "EOF" );
 							*bufPtr++ = c;
 						}
 
 						*bufPtr = 0;
 						bufPtr = buf;
+
+					    Serial1.println( buf );
 
 						if( memcmp( buf, "CH", 2 ) )		// ignore all lines not starting with "CH"
 							continue;
@@ -230,8 +254,12 @@ bool Storage::begin()
 				mItems[i].mHigh = (int)EEPROM.read( ptr + 1 );
 				mItems[i].mActuators = EEPROM.read( ptr + 2 );
 				mItems[i].mIsLogging = EEPROM.read( ptr + 3 );
+				mItems[i].mCalibrationValue = (float)(EEPROM.read( ptr + 4 )) / 10.0;
 			}
-			mItems[i].mItemState = static_cast<Item::ItemState_t>(EEPROM.read( ptr + 4 ));
+
+			// the forced state of the item is only stored in EEPROM and
+			// shall always be read from it
+			mItems[i].mItemState = static_cast<Item::ItemState_t>(EEPROM.read( ptr + 5 ));
 
 			ptr += EEPROM_ITEM_SZ;				// move to the next record
 		}
@@ -262,8 +290,8 @@ bool Storage::begin()
 
 			for( int i = 0; i < CHANNEL_COUNT; i++ )
 			{
-				char buf[256];
-				sprintf(buf, "CH%d L:%s %d %d A:", i+1, mItems[i].mIsLogging ? "ON" : "OFF", mItems[i].mLow, mItems[i].mHigh );
+				char buf[128];
+				sprintf(buf, "CH%d C+0 L:%s %d %d A:", i+1, mItems[i].mIsLogging ? "ON" : "OFF", mItems[i].mLow, mItems[i].mHigh );
 				cfgFile.print(buf);
 
 				for( int k = 0; k < CHANNEL_COUNT; k++ )
@@ -302,6 +330,7 @@ bool Storage::begin()
 		EEPROM.write( ptr++, mItems[i].mHigh );
 		EEPROM.write( ptr++, mItems[i].mActuators );
 		EEPROM.write( ptr++, mItems[i].mIsLogging );
+		EEPROM.write( ptr++, (byte)(mItems[i].mCalibrationValue * 10));
 
 		if( !isValidConfigEEPROM )
 			EEPROM.write( ptr, mItems[i].mItemState );
@@ -317,6 +346,9 @@ bool Storage::begin()
 		Serial1.println( b );
 		sprintf( b, "mItems[%d].mItemState=%d", i, mItems[i].mItemState );
 		Serial1.println( b );
+		sprintf( b, "Calibration Value=%d (in ten's of a centigrade)", (int)(mItems[i].mCalibrationValue * 10.0) );
+		Serial1.println( b );
+		Serial1.println( mItems[i].mCalibrationValue );
 
 		// activate the corresponding ADC
 
@@ -335,8 +367,11 @@ bool Storage::begin()
 //
 bool Storage::parseln( const char * line )
 {
-	char lBuf[256];
+	char lBuf[128];
 	strcpy(lBuf, line);
+
+	Serial1.print( freeRam() );
+	Serial1.println( " Bytes left" );
 
 	int low, high;
 	uint8_t acts = 0;		// bit mask of the controlled actuators
@@ -358,6 +393,45 @@ bool Storage::parseln( const char * line )
 
 	Serial1.print("CH");
 	Serial1.print(chId+1);		// towards the user all the channels are counted 1 to 8
+
+	// calibration
+
+	if( strstr(line, "C+") )
+	{
+		char buf[32];
+		strcpy( buf, strstr(line, "C+") + 2 );
+		const char * pch = strtok( buf, " " );
+		Serial1.print( " calibration = " );
+
+		if(pch)
+		{
+			mItems[chId].mCalibrationValue = (float)atoi(pch) / 10.0;
+			Serial1.println( mItems[chId].mCalibrationValue );
+		}
+	}
+	else
+	{
+		if( strstr(line, "C-") )
+		{
+			char buf[32];
+			strcpy( buf, strstr(line, "C-") + 2 );
+			const char * pch = strtok( buf, " " );
+			Serial1.print( " calibration = " );
+
+			if(pch)
+			{
+				mItems[chId].mCalibrationValue = -(float)atoi(pch) / 10.0;
+				Serial1.println( mItems[chId].mCalibrationValue );
+			}
+
+		}
+		else
+		{
+			Serial1.println( " Missing calibration value" );
+			return false;
+		}
+	}
+
 
 	// look for L:ON|L:OFF
 
@@ -407,6 +481,13 @@ bool Storage::parseln( const char * line )
 	mItems[chId].mLow = low;
 	mItems[chId].mHigh = high;
 
+	if( low > high )
+	{
+		Serial1.println(" mLow is higher than mHigh");
+		return false;
+	}
+
+
 	if(!(pch = strtok (NULL," ")))
 	{
 		mItems[chId].mActuators = 0;
@@ -453,7 +534,7 @@ bool Storage::parseln( const char * line )
 //
 void Storage::temperatureReading(uint8_t item, float t)
 {
-	mItems[item].Temperature = t;
+	mItems[item].Temperature = t + mItems[item].mCalibrationValue;
 	mItems[item].mIsDirty = true;
 
 	// actuate
@@ -461,17 +542,27 @@ void Storage::temperatureReading(uint8_t item, float t)
 	{
 		if(mItems[item].mActuators & (1 << actuatorId))
 		{
-			if(mItems[item].mItemState == Item::forced_on || (mItems[item].mItemState == Item::normal && t <= mItems[item].mLow))
+			if(mItems[item].mItemState == Item::forced_on || (mItems[item].mItemState == Item::normal && mItems[item].Temperature <= mItems[item].mLow))
 			{
 				Actuators[actuatorId].activate(item);
-				mItems[item].mIsOn =  true;
+
+				if( mItems[item].mIsOn != true )
+				{
+					mItems[item].mToggleCounter++;
+					mItems[item].mIsOn =  true;
+				}
 			}
 			else
 			{
-				if(mItems[item].mItemState == Item::forced_off ||  t >= mItems[item].mHigh)
+				if(mItems[item].mItemState == Item::forced_off ||  mItems[item].Temperature >= mItems[item].mHigh)
 				{
 					Actuators[actuatorId].deactivate(item);
-					mItems[item].mIsOn =  false;
+
+					if( mItems[item].mIsOn != false )
+					{
+						mItems[item].mToggleCounter++;
+						mItems[item].mIsOn =  false;
+					}
 				}
 			}
 		}
@@ -516,14 +607,8 @@ bool Storage::LogIfDue( DateTime dt )
 		{
 			if( mItems[i].mIsLogging )
 			{
-				char fileName[13];
-
-				itoa( dt.year(), fileName, 10 );
-				itoa( dt.month(), fileName+4, 10 );
-				fileName[6] = 'A';
-				fileName[7] = i + '1';
-				fileName[8] = 0;
-				strcat( fileName, ".txt" );
+				char fileName[128];
+				sprintf( fileName, "%d%02dA%d.txt", dt.year(), dt.month(), i + 1);
 
 				Serial1.print( "opening file " );
 				Serial1.println( fileName );
@@ -531,10 +616,13 @@ bool Storage::LogIfDue( DateTime dt )
 
 				if (f)
 				{
-					char buf[256];
-					sprintf(buf, "%d%02d%02d %02d00  %d  %d%%", dt.year(), dt.month(), dt.day(), dt.hour(),
+					char buf[128];
+
+					sprintf(buf, "%d%02d%02d %02d00  %dC  duty:%d%%  (%d %s)", dt.year(), dt.month(), dt.day(), dt.hour(),
 							(int)(mItems[i].Temperature),
-							(int)((float)(mItems[i].mCheckPointsActive)/(float)mCheckPointsTotal * 100));
+							(int)((float)(mItems[i].mCheckPointsActive)/(float)mCheckPointsTotal * 100),
+							(int)mItems[i].mToggleCounter, (mItems[i].mToggleCounter == 1 ? "toggle" : "toggles") );
+
 					if( !f.println(buf) )
 					{
 						Serial1.println( "Failed to log. Is the SD inserted? Do not forget to reset after insertion" );
@@ -558,6 +646,7 @@ bool Storage::LogIfDue( DateTime dt )
 		for(int i = 0; i < CHANNEL_COUNT; i++ )
 		{
 			mItems[i].mCheckPointsActive = 0;
+			mItems[i].mToggleCounter = 0;
 		}
 
 		return true;
@@ -574,7 +663,7 @@ bool Storage::LogIfDue( DateTime dt )
 void Storage::setItemState(int index, Item::ItemState_t itemState)
 {
 	mItems[index].mItemState = itemState;
-
+	mItems[index].mIsDirty = true;
 	// find the relevant item in EEPROM and update only this byte
 
 	EEPROM.write( 2 + index * EEPROM_ITEM_SZ + 4, itemState);

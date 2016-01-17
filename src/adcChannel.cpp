@@ -43,15 +43,23 @@ bool AdcChannel::isDue()
 
 	// provide for the wrap around of millis()
 
-	return ms < lastSampledTime || (ms - lastSampledTime) >= samplePeriod;
+	return !lastSampledTime || ms < lastSampledTime || (ms - lastSampledTime) >= samplePeriod;
 }
 
 
 
 float AdcChannel::getTemperature()
 {
-	long Vout = analogRead(mAnalogPin);	// voltage
-	Vout = Vout == 0 ? 1 : Vout;		// this precaution is needed when thermistor branch is grounded
+	long accumulator = 0;
+
+	for( int i = 0; i < 500; i++ )
+	{
+		int v = analogRead(mAnalogPin);	// voltage;
+		v = v == 0 ? 1 : v;
+
+		accumulator += v;
+	}
+	long Vout = accumulator / 500;
 
 	lastSampledTime = millis();
 

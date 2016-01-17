@@ -17,7 +17,7 @@
 #include "RTClib.h"
 
 #define CHANNEL_COUNT 8
-#define EEPROM_ITEM_SZ 5
+#define EEPROM_ITEM_SZ 6
 
 
 struct Item
@@ -44,6 +44,10 @@ struct Item
 	 *  count of check-points and the activity accumulator in order to calculate the active/total ratio
 	 */
 	long mCheckPointsActive;
+
+	long mToggleCounter;
+
+	float mCalibrationValue;	//!< the calibration value for the temperature for this channel, e.g. -0.5
 };
 
 class Storage
