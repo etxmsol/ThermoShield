@@ -65,7 +65,7 @@ float AdcChannel::getTemperature()
 
 	// calculate thermistor resistance
 	float ratio = (float)1/((float)1023/(float)Vout-(float)1);
-	float Rth = 100000.0 * ratio;
+	float Rth = (float)R0 * ratio;
 
 	float temp = 1.0/(1.0/298.15 + 1.0/B*log(Rth/R0))-273.15;
 

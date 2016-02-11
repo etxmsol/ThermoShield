@@ -65,7 +65,7 @@ extern AdcChannel ADCs[8];
 static const int LOGGING_INTERVAL = 3600;		// seconds
 
 static const byte MAGIC_EEPROM_BYTE1 = 0x01;	// version
-static const byte MAGIC_EEPROM_BYTE2 = 0x04;	// revision
+static const byte MAGIC_EEPROM_BYTE2 = 0x05;	// revision
 
 
 // freeRam **********************************************************
@@ -94,7 +94,7 @@ Storage::Storage()
 	defaultItem.mHigh = 22;
 	defaultItem.mLow = 20;
 	defaultItem.mIsDirty = true;
-	defaultItem.mIsOn = false;
+	defaultItem.mIsOn = true;
 	defaultItem.mItemState = Item::normal;
 	defaultItem.mIsLogging = true;
 	defaultItem.mCheckPointsActive = 0;
@@ -666,5 +666,5 @@ void Storage::setItemState(int index, Item::ItemState_t itemState)
 	mItems[index].mIsDirty = true;
 	// find the relevant item in EEPROM and update only this byte
 
-	EEPROM.write( 2 + index * EEPROM_ITEM_SZ + 4, itemState);
+	EEPROM.write( 2 + index * EEPROM_ITEM_SZ + 5, itemState);
 }

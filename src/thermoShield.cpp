@@ -37,6 +37,7 @@ Storage Store;
 int CurrentIndex = -1;
 unsigned long notTooOftenCounter = 0;
 
+bool ForceADCReadout = false;
 
 int freeRam ();
 
@@ -161,15 +162,20 @@ void loop()
 	case Button::press_hold:
 		Serial1.println("Press and hold condition");
 
+		ForceADCReadout = true;
+
 		switch( Store.getItemState(Store.mIndex) )
 		{
 		case Item::normal:
+			Serial1.println("normal->forced_off");
 			Store.setItemState(Store.mIndex, Item::forced_off);
 			break;
 		case Item::forced_off:
+			Serial1.println("forced_off->forced_on");
 			Store.setItemState(Store.mIndex, Item::forced_on);
 			break;
 		case Item::forced_on:
+			Serial1.println("forced_on->normal");
 			Store.setItemState(Store.mIndex, Item::normal);
 			break;
 		}
@@ -184,11 +190,12 @@ void loop()
 	for(int i = 0; i < CHANNEL_COUNT; i++ )
 	{
 		AdcChannel * ch = &ADCs[i];
-		if( ch->isActive() && ch->isDue())
+		if( ch->isActive() && ( ForceADCReadout || ch->isDue() ))
 		{
 			Store.temperatureReading(i, ch->getTemperature());
 		}
 	}
+	ForceADCReadout = false;
 
 	// update LCD display if necessary
 
