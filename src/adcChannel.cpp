@@ -52,14 +52,14 @@ float AdcChannel::getTemperature()
 {
 	long accumulator = 0;
 
-	for( int i = 0; i < 500; i++ )
+	for( int i = 0; i < 5; i++ )
 	{
 		int v = analogRead(mAnalogPin);	// voltage;
 		v = v == 0 ? 1 : v;
 
 		accumulator += v;
 	}
-	long Vout = accumulator / 500;
+	long Vout = accumulator / 5;
 
 	lastSampledTime = millis();
 
@@ -68,6 +68,8 @@ float AdcChannel::getTemperature()
 	float Rth = (float)R0 * ratio;
 
 	float temp = 1.0/(1.0/298.15 + 1.0/B*log(Rth/R0))-273.15;
+
+	return temp;
 
 	//float temp = B/log(Rth/(R0*exp(-B/298.15)))-273.15;
 	//THERM=100k*exp( 3950/(temp+273) - 3950/(25+273) )

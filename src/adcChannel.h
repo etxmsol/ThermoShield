@@ -14,6 +14,8 @@
 #ifndef ADCCHANNEL_H_
 #define ADCCHANNEL_H_
 
+#include <Arduino.h>
+
 #define SAMPLE_WINDOW	6		// number of samples to keep in the ring buffer for averaging
 								// Be careful, this affects RAM usage alot.
 
