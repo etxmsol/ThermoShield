@@ -19,11 +19,15 @@ AD5165::AD5165()
 {
 	// set the CS as an output:
 	pinMode (CS, OUTPUT);
+	pinMode(22, INPUT);
+
 	// initialize SPI:
 	SPI.begin();
+	SPI.setBitOrder(MSBFIRST);
+	SPI.setClockDivider(SPI_CLOCK_DIV32);
 }
 
-uint8_t AD5165::resistance(uint8_t value)
+void AD5165::resistance(uint8_t value)
 {
 	if(value != m_value)
 	{
