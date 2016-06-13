@@ -30,6 +30,8 @@ struct Item
 	float Temperature;
 	int mLow;
 	int mHigh;
+	long mR;				//!< digital POT impedance (should match the NTC)
+
 	bool mIsDirty;			//!< the new value has not been displayed
 	uint8_t mActuators;		//!< bit 0 - Actuator 0, bit 7 - actuator 7
 	bool mIsOn;				//!< checks if the trigger conditions are satisfied
@@ -86,6 +88,9 @@ public:
 
 	void setHigh(int slaveId, int index, int mHigh) { mItems[slaveId][index].mHigh = mHigh; }
 	int getHigh(int slaveId, int index) { return mItems[slaveId][index].mHigh;  }
+
+	void setR(int slaveId, int index, long mR) { mItems[slaveId][index].mR = mR; }
+	long getR(int slaveId, int index) { return mItems[slaveId][index].mR;  }
 
 	void setDirty(int slaveId, int index, bool isDirty) { mItems[slaveId][index].mIsDirty = isDirty; }
 	bool getDirty(int slaveId, int index) { return mItems[slaveId][index].mIsDirty; }

@@ -87,6 +87,7 @@ Storage::Storage()
 	defaultItem.mCheckPointsActive = 0;
 	defaultItem.mToggleCounter = 0;
 	defaultItem.mCalibrationValue = 0;
+	defaultItem.mR = 10000;
 
 
 	for( int i = 0; i < MAX_DEPTH; i++ )

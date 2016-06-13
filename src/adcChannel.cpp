@@ -12,6 +12,9 @@
  */
 #include "Arduino.h"
 #include "adcChannel.h"
+#include "channel.h"
+
+
 
 AdcChannel::AdcChannel() : mAnalogPin(0), lastSampledTime(0), mIsActive(false)
 {
