@@ -15,7 +15,7 @@
 
 const int CS = 11;
 
-AD5165::AD5165()
+AD5165::AD5165() : m_value(0)
 {
 	// set the CS as an output:
 	pinMode (CS, OUTPUT);

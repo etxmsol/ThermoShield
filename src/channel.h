@@ -14,7 +14,7 @@
 #ifndef CHANNEL_H_
 #define CHANNEL_H_
 
-#define MAX_DEPTH 		8		// max number of layers (1 master + up to 7 slaves)
+#define MAX_DEPTH 		1		// max number of layers (1 master + up to 7 slaves)
 #define CHANNEL_COUNT 	8
 #define EEPROM_ITEM_SZ 	6
 
@@ -31,6 +31,7 @@ struct Item
 	int mLow;
 	int mHigh;
 	long mR;				//!< digital POT impedance (should match the NTC)
+	int mBeta;				//!< Beta of the NTC
 
 	bool mIsDirty;			//!< the new value has not been displayed
 	uint8_t mActuators;		//!< bit 0 - Actuator 0, bit 7 - actuator 7
@@ -83,6 +84,9 @@ public:
 	void setTemperature(int slaveId, int index, float t);
 	float getTemperature(int slaveId, int index) { return mItems[slaveId][index].Temperature; }
 
+	void setCalibrationValue(int slaveId, int index, float c) { mItems[slaveId][index].mCalibrationValue = c; }
+	float getCalibrationValue(int slaveId, int index) { return mItems[slaveId][index].mCalibrationValue; }
+
 	void setLow(int slaveId, int index, int mLow) { mItems[slaveId][index].mLow = mLow; }
 	int getLow(int slaveId, int index) { return mItems[slaveId][index].mLow;  }
 
@@ -91,6 +95,9 @@ public:
 
 	void setR(int slaveId, int index, long mR) { mItems[slaveId][index].mR = mR; }
 	long getR(int slaveId, int index) { return mItems[slaveId][index].mR;  }
+
+	void setBeta(int slaveId, int index, int mB) { mItems[slaveId][index].mBeta = mB; }
+	long getBeta(int slaveId, int index) { return mItems[slaveId][index].mBeta;  }
 
 	void setDirty(int slaveId, int index, bool isDirty) { mItems[slaveId][index].mIsDirty = isDirty; }
 	bool getDirty(int slaveId, int index) { return mItems[slaveId][index].mIsDirty; }

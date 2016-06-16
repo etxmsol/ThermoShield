@@ -578,6 +578,7 @@ void Storage::setTemperature(int slaveId, int item, float t)
 }
 
 
+
 //bool Storage::LogIfDue( DateTime dt )
 //{
 //	mCheckPointsTotal++;

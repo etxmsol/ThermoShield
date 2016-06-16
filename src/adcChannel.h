@@ -64,7 +64,7 @@ public:
 	 *
 	 * @return     Temperature
 	 */
-	float getTemperature();
+	float getTemperature(float r0, int beta);
 
 	/*!
 	 * @brief      Activates this ADC.

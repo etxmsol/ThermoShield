@@ -51,26 +51,38 @@ bool AdcChannel::isDue()
 
 
 
-float AdcChannel::getTemperature()
+float AdcChannel::getTemperature(float res, int b)
 {
+	// discharge the LP filter capacitor, because
+	// the same filter is used for all inputs on the same
+	// shield
+	analogWrite(mAnalogPin, 0);
+	delay(10);
+
+	// set back in high impedance and wait a little
+
+	pinMode(mAnalogPin, INPUT);
+	analogRead(mAnalogPin);
+	delay(2000);
+
 	long accumulator = 0;
 
 	for( int i = 0; i < 5; i++ )
 	{
 		int v = analogRead(mAnalogPin);	// voltage;
+
 		v = v == 0 ? 1 : v;
 
 		accumulator += v;
 	}
 	long Vout = accumulator / 5;
-
 	lastSampledTime = millis();
 
 	// calculate thermistor resistance
 	float ratio = (float)1/((float)1023/(float)Vout-(float)1);
-	float Rth = (float)R0 * ratio;
+	float Rth = (float)res * ratio;
 
-	float temp = 1.0/(1.0/298.15 + 1.0/B*log(Rth/R0))-273.15;
+	float temp = 1.0/(1.0/298.15 + 1.0/b*log(Rth/res))-273.15;
 
 	return temp;
 
